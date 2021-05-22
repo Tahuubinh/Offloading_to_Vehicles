@@ -5,7 +5,7 @@ def column_chart1(strs):
     x=[i for i in range(1,100)]
     labels=["Combine fuzzy and deep q 1","deep q learning 1","fuzzy","random"]
     fig, ax = plt.subplots()
-    files=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/code/n_quality_tasks_ucb.csv")[0:99]
+    files=pd.read_csv("D:/Projects/Anaconda Projects/GitDownload/Luutam/Mec_ver4-main/n_quality_tasks_dql.csv")[0:99]
     m=files["good"]+files["medium"]+files["bad"]
     print(m)
     print([np.mean(files["good"]/m)]*len(x))

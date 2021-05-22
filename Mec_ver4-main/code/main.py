@@ -175,22 +175,22 @@ def Run_FDQO(i):
     files.close()
 
 if __name__=="__main__":
-    # types = "DDQL"
-    # if len(sys.argv) > 1:
-    #     types = sys.argv[1]
-    # if types =="FDQO":
-    #     Run_FDQO()
-    # elif types == "Random":
-    #     Run_Random()
-    # elif types == "Fuzzy":
-    #     Run_Fuzzy()
-    # elif types == "DQL":
-    #     Run_DQL()
-    # elif types == "DDQL":
-    #     Run_DDQL()
+    types = "DQL"
+    if len(sys.argv) > 1:
+        types = sys.argv[1]
+    if types =="FDQO":
+        Run_FDQO()
+    elif types == "Random":
+        Run_Random()
+    elif types == "Fuzzy":
+        Run_Fuzzy()
+    elif types == "DQL":
+        Run_DQL()
+    elif types == "DDQL":
+        Run_DDQL()
     #create model FDQO
-    for i in range(3, 6):
-        try:
-            Run_DDQL(i)
-        except:
-            continue
+    # for i in range(3, 6):
+    #     try:
+    #         Run_DDQL(i)
+    #     except:
+    #         continue
