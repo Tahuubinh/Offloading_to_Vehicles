@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 path =os.path.abspath(__file__)
 path =Path(path).parent.parent
-for i in range(100):
+for i in range(502):
     with open("{}/{}/datatask{}.csv".format(str(path),"data_task",i),"w") as output:
         indexs=rd.randint(900,1200)
         m = np.sort(np.random.randint(i*300,(i+1)*300,indexs))

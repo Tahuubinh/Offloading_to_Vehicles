@@ -131,7 +131,7 @@ def Run_DQL():
     callback2 = ModelIntervalCheckpoint("weight_DQL.h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 104838, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
     model=build_model(14,4)
