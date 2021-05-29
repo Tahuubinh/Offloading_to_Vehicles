@@ -7,17 +7,17 @@ b=[]
 e=[]
 fig, ax = plt.subplots(1)
 for i in range(1,6):
-    files=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/result4/Combine fuzzy and deep q "+str(i+1)+"/ketqua_oneday.csv")
+    files=pd.read_csv("../../result4/Combine fuzzy and deep q "+str(i+1)+"/ketqua_oneday.csv")
     x=files["mean_reward"].to_numpy()[0:100]
     x = x[1:100]
     #print(x.shape)
     a.append(x)
-    files=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/result4/deep q learning "+str(i)+"/ketqua_oneday.csv")
+    files=pd.read_csv("../../result4/deep q learning "+str(i)+"/ketqua_oneday.csv")
     xx=files["mean_reward"].to_numpy()[0:100]
     xx = xx[1:100]
     #print(xx.shape)
     b.append(xx)
-    files=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/code/DDQL_5phut"+str(i)+".csv")
+    files=pd.read_csv("../DDQL_5phut"+str(i)+".csv")
     xxx=files["mean_reward"].to_numpy()[0:99]
     e.append(xxx)
     print(xxx.shape)

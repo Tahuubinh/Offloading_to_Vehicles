@@ -178,7 +178,7 @@ class BusEnv(gym.Env):
             self.quality_result_file.write("{},{},{}\n".format(self.n_quality_tasks[0],self.n_quality_tasks[1],self.n_quality_tasks[2]))
             
             #check end of program? to close files 
-            if self.index_of_episode == 100:
+            if self.index_of_episode == 502:
                 self.quality_result_file.close()
                 self.configuration_result_file.close()
                 self.node_computing.close()

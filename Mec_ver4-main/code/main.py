@@ -133,7 +133,7 @@ def Run_DQL():
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
     dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
-def Run_DDQL(i):
+def Run_DDQL():
     model=build_model(14,4)
     num_actions = 4
     policy = EpsGreedyQPolicy(0.1)
@@ -147,13 +147,13 @@ def Run_DDQL(i):
     files = open("testDDQL.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("DDQL_5phut"+str(i)+".csv")
+    callbacks = CustomerTrainEpisodeLogger("DDQL_5phut.csv")
     callback2 = ModelIntervalCheckpoint("weight_DDQL.h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 104838, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
-def Run_FDQO(i):
+def Run_FDQO():
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
     model = FDQO_method.build_model()
     #Create enviroment FDQO
@@ -167,15 +167,15 @@ def Run_FDQO(i):
     files = open("testFDQO.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("FDQO_5phut"+str(i)+".csv")
+    callbacks = CustomerTrainEpisodeLogger("FDQO_5phut.csv")
     callback2 = ModelIntervalCheckpoint("weight_FDQO.h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(lr=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 104838, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    model.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
 if __name__=="__main__":
-    types = "DQL"
+    types = "FDQO"
     if len(sys.argv) > 1:
         types = sys.argv[1]
     if types =="FDQO":
