@@ -123,7 +123,7 @@ def Run_DQL():
     memory = SequentialMemory(limit=5000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy,gamma=0.9,memory_interval=1)
+              target_model_update=1e-3, policy=policy,gamma=0.7,memory_interval=1)
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
@@ -175,7 +175,7 @@ def Run_FDQO():
     files.close()
 
 if __name__=="__main__":
-    types = "FDQO"
+    types = "DQL"
     if len(sys.argv) > 1:
         types = sys.argv[1]
     if types =="FDQO":

@@ -25,8 +25,8 @@ for i in range(1,6):
 m=[i for i in range(1,100)]
 
 
-c=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/result4/fuzzy/fuzzy_150.csv")
-d=pd.read_csv("D:/Binh/Projects/GitDownload/Mec_ver4-main/Mec_ver4-main/result4/random/fuzzy_150.csv")
+c=pd.read_csv("../../result4/fuzzy/fuzzy_150.csv")
+d=pd.read_csv("../../result4/random/fuzzy_150.csv")
 
 ax.plot(m,np.average(a,axis=0),marker='^', markevery=10,label='FDQO',color="orange")
 ax.plot(m,np.average(b,axis=0),marker='o', markevery=10,label='DQL',color="blue")

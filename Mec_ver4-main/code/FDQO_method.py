@@ -102,7 +102,8 @@ class DQNAgent(AbstractDQNAgent):
 
         # Validate (important) input.
         if list(model.output.shape) != list((None, self.nb_actions)):
-            raise ValueError('Model output "{}" has invalid shape. DQN expects a model that has one dimension for each action, in this case {}.'.format(model.output, self.nb_actions))
+            raise ValueError('Model output "{}" has invalid shape. DQN expects a model that has one dimension for each action, in this case {}.'.
+                             mat(model.output, self.nb_actions))
 
         # Parameters.
         self.files = open("kq.csv","w")

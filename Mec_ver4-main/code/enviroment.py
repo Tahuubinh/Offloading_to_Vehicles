@@ -230,15 +230,15 @@ class BusEnv(gym.Env):
         self.data = self.data[self.data[:,0]!=self.data[0][0]]
         self.time = self.queue[0][0]
         self.observation = np.array([self.readexcel(900,self.queue[0][0]),\
-             max(0,self.observation[1]-(self.time-self.time_last)),
+             0,
               1,\
              self.readexcel(901,self.queue[0][0]), 
-             max(0,self.observation[4]-(self.time-self.time_last)), 
+             0, 
              1.2,\
              self.readexcel(902,self.queue[0][0]), 
-             max(0,self.observation[7]-(self.time-self.time_last)), 
+             0, 
              1,\
-             max(0,self.observation[9]-(self.time-self.time_last)), 
+             0, 
              3,\
              self.queue[0][1],self.queue[0][2], 
              self.queue[0][4]])
