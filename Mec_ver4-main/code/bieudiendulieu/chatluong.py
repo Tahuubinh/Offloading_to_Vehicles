@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 def column_chart1(strs):
-    x=[i for i in range(1,401)]
+    x=[i for i in range(1,251)]
     labels=["Combine fuzzy and deep q 1","deep q learning 1","fuzzy","random"]
     fig, ax = plt.subplots()
-    files=pd.read_csv("../n_quality_tasks_fdqo.csv")[0:400]
+    files=pd.read_csv("../n_quality_tasks_dql_1.csv")[0:250]
     m=files["good"]+files["medium"]+files["bad"]
     print(m)
     print([np.mean(files["good"]/m)]*len(x))
