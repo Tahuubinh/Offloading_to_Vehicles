@@ -14,9 +14,14 @@ class CustomerTrainEpisodeLogger(Callback):
         self.rewards = {}
         self.actions = {}
         self.metrics = {}
+        # metrics
+        self.loss = {}
+        self.mae = {}
+        self.mean_q = {}
+        
         self.step = 0
         self.files=open(filename,"w")
-        self.files.write("total_reward,mean_reward\n")
+        self.files.write("total_reward,mean_reward,loss,mae,mean_q\n")
 
     def on_train_begin(self, logs):
         """ Print training values at beginning of training """
@@ -36,6 +41,10 @@ class CustomerTrainEpisodeLogger(Callback):
         self.rewards[episode] = []
         self.actions[episode] = []
         self.metrics[episode] = []
+        
+        self.loss[episode] = []
+        self.mae[episode] = []
+        self.mean_q[episode] = []
 
     def on_episode_end(self, episode, logs):
         """ Compute and print training statistics of the episode when done """
@@ -53,11 +62,14 @@ class CustomerTrainEpisodeLogger(Callback):
                     metrics_template += ', '
                 try:
                     value = np.nanmean(metrics[:, idx])
-                    metrics_template += '{}: {:f}'
+                    # metrics_template += '{}: {:f}'
+                    metrics_template += '{:f}'
                 except Warning:
                     value = '--'
-                    metrics_template += '{}: {}'
-                metrics_variables += [name, value]
+                    # metrics_template += '{}: {}'
+                    metrics_template += '{}'
+                # metrics_variables += [name, value]
+                metrics_variables += [value]
         metrics_text = metrics_template.format(*metrics_variables)
 
         nb_step_digits = str(
@@ -85,7 +97,7 @@ class CustomerTrainEpisodeLogger(Callback):
         }
 
         #print(template.format(**variables))
-        self.files.write(str(variables["episode_reward"])+","+str(variables["reward_mean"])+"\n")
+        self.files.write(str(variables["episode_reward"])+","+str(variables["reward_mean"])+","+str(variables["metrics"])+"\n")
         # Free up resources.
         del self.episode_start[episode]
         del self.observations[episode]

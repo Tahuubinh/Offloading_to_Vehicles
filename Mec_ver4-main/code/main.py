@@ -124,15 +124,16 @@ def Run_DQL(i):
     memory = SequentialMemory(limit=5000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy,gamma=0.7,memory_interval=1)
+              target_model_update=1e-3, policy=policy,gamma=0.8,memory_interval=1)
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
     callbacks = CustomerTrainEpisodeLogger("DQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_DQL.h5f",interval=50000)
+    callback2 = ModelIntervalCheckpoint("weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
     model=build_model(14,4)
@@ -150,10 +151,11 @@ def Run_DDQL(i):
     files.write("kq\n")
     #create callback
     callbacks = CustomerTrainEpisodeLogger("DDQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_DDQL.h5f",interval=50000)
+    callback2 = ModelIntervalCheckpoint("weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 250000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
@@ -171,7 +173,7 @@ def Run_FDQO(i):
     files.write("kq\n")
     #create callback
     callbacks = CustomerTrainEpisodeLogger("FDQO_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_FDQO.h5f",interval=50000)
+    callback2 = ModelIntervalCheckpoint("weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(lr=1e-3), metrics=['mae'])
     model.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
@@ -192,8 +194,8 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(9, 10 ):
+    for i in range(7, 8 ):
         try:
-            Run_FDQO(i)
+            Run_DQL(i)
         except:
             continue
