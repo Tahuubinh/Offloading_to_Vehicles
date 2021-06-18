@@ -19,11 +19,11 @@ class BusEnv(gym.Env):
         self.action_space = spaces.Discrete(5)
         self.observation_space = spaces.Box(0, 100, [16])
         #streaming data of localtion of three bus with(900, 901, 902)
-        data900 = pd.read_excel(os.path.join(DATA_DIR, "data9000.xlsx"), index_col=0).to_numpy()
+        data900 = pd.read_excel(os.path.join(DATA_DIR, "data9000_reverse.xlsx"), index_col=0).to_numpy()
         data900 = data900[:, 13:15]
-        data901 = pd.read_excel(os.path.join(DATA_DIR, "data9001.xlsx"), index_col=0).to_numpy()
+        data901 = pd.read_excel(os.path.join(DATA_DIR, "data9001_reverse.xlsx"), index_col=0).to_numpy()
         data901 = data901[:, 13:15]
-        data902 = pd.read_excel(os.path.join(DATA_DIR , "data9002.xlsx"), index_col=0).to_numpy()
+        data902 = pd.read_excel(os.path.join(DATA_DIR , "data9002_reverse.xlsx"), index_col=0).to_numpy()
         data902 = data902[:, 13:15]
         self.data_bus = {"900":data900, "901":data901, "902":data902}
         #streaming data of task

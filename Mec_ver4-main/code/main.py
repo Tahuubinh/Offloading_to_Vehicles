@@ -154,8 +154,8 @@ def Run_DDQL(i):
     callback2 = ModelIntervalCheckpoint("weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 250000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
-    dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
@@ -194,8 +194,8 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(8, 9 ):
+    for i in range(10, 11 ):
         try:
-            Run_DQL(i)
+            Run_FDQO(i)
         except:
             continue
