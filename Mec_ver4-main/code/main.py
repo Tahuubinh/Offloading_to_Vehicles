@@ -194,7 +194,7 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(10, 11 ):
+    for i in range(11, 12 ):
         try:
             Run_FDQO(i)
         except:
