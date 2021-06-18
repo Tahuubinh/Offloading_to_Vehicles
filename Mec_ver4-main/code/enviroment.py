@@ -27,7 +27,7 @@ class BusEnv(gym.Env):
         data902 = data902[:, 13:15]
         self.data_bus = {"900":data900, "901":data901, "902":data902}
         #streaming data of task
-        if env != "DQL" and env != "FDQO": 
+        if env != "DQL" and env != "FDQO" and env != "DDQL": 
             self.index_of_episode = 0
             self.data = pd.read_csv(os.path.join(DATA_TASK, "datatask{}.csv".format(self.index_of_episode)),header=None).to_numpy()
             self.data = np.sort(self.data, axis=0)

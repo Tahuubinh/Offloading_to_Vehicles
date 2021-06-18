@@ -132,7 +132,7 @@ def Run_DQL(i):
     callback2 = ModelIntervalCheckpoint("weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
@@ -145,7 +145,7 @@ def Run_DDQL(i):
     memory = SequentialMemory(limit=5000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy,gamma=0.7,memory_interval=1,
+              target_model_update=1e-3, policy=policy,gamma=0.8,memory_interval=1,
               enable_double_dqn=True)
     files = open("testDDQL.csv","w")
     files.write("kq\n")
@@ -154,7 +154,7 @@ def Run_DDQL(i):
     callback2 = ModelIntervalCheckpoint("weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
@@ -176,7 +176,8 @@ def Run_FDQO(i):
     callback2 = ModelIntervalCheckpoint("weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(lr=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    model.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
 if __name__=="__main__":
@@ -194,8 +195,8 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(11, 12 ):
+    for i in range(16, 17 ):
         try:
-            Run_FDQO(i)
+            Run_DDQL(i)
         except:
             continue
