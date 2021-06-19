@@ -195,8 +195,8 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(16, 17 ):
+    for i in range(17, 18 ):
         try:
-            Run_DDQL(i)
+            Run_FDQO(i)
         except:
             continue

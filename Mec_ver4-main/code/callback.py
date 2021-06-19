@@ -21,7 +21,7 @@ class CustomerTrainEpisodeLogger(Callback):
         
         self.step = 0
         self.files=open(filename,"w")
-        self.files.write("total_reward,mean_reward,loss,mae,mean_q\n")
+        self.files.write("total_reward,mean_reward,loss,mae,mean_q,episode_steps,step\n")
 
     def on_train_begin(self, logs):
         """ Print training values at beginning of training """
@@ -97,7 +97,8 @@ class CustomerTrainEpisodeLogger(Callback):
         }
 
         #print(template.format(**variables))
-        self.files.write(str(variables["episode_reward"])+","+str(variables["reward_mean"])+","+str(variables["metrics"])+"\n")
+        self.files.write(str(variables["episode_reward"])+","+str(variables["reward_mean"])+","+str(variables["metrics"])
+                         +","+str(variables["episode_steps"])+","+str(variables["step"])+"\n")
         # Free up resources.
         del self.episode_start[episode]
         del self.observations[episode]
