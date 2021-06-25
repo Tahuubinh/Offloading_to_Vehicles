@@ -128,11 +128,11 @@ def Run_DQL(i):
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("DQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_DQL_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFiles/DQL_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFiles/weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
@@ -150,11 +150,11 @@ def Run_DDQL(i):
     files = open("testDDQL.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("DDQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_DDQL_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFiles/DDQL_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFiles/weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
@@ -172,11 +172,11 @@ def Run_FDQO(i):
     files = open("testFDQO.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("FDQO_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("weight_FDQO_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFiles/FDQO_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFiles/weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(lr=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 300000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    model.fit(env, nb_steps= 500000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
@@ -195,8 +195,8 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(17, 18 ):
+    for i in range(0,1):
         try:
-            Run_FDQO(i)
+            Run_FDQO('dense_0.6_test')
         except:
             continue

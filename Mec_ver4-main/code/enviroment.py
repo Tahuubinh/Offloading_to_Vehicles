@@ -119,22 +119,22 @@ class BusEnv(gym.Env):
             self.node_computing = open("chiatask_fuzzy.csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         elif self.env == "FDQO":
-            self.rewardfiles = open("FDQO_5phut_env_"+ str(i) +".csv","w")
-            self.quality_result_file = open("n_quality_tasks_fdqo_"+ str(i) +".csv","w")
+            self.rewardfiles = open("./csvFiles/FDQO_5phut_env_"+ str(i) +".csv","w")
+            self.quality_result_file = open("./csvFiles/n_quality_tasks_fdqo_"+ str(i) +".csv","w")
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_fdqo_"+ str(i) +".csv"),"w")
-            self.node_computing = open("chiatask_fdqo_"+ str(i) +".csv","w")
+            self.node_computing = open("./csvFiles/chiatask_fdqo_"+ str(i) +".csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         elif self.env == "DQL":
-            self.rewardfiles = open("DQL_5phut_env_"+ str(i) +".csv","w")
-            self.quality_result_file = open("n_quality_tasks_dql_"+ str(i) +".csv","w")
+            self.rewardfiles = open("./csvFiles/DQL_5phut_env_"+ str(i) +".csv","w")
+            self.quality_result_file = open("./csvFiles/n_quality_tasks_dql_"+ str(i) +".csv","w")
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_dql_"+ str(i) +".csv"),"w")
-            self.node_computing = open("chiatask_dql_"+ str(i) +".csv","w")
+            self.node_computing = open("./csvFiles/chiatask_dql_"+ str(i) +".csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         elif self.env == "DDQL":
-            self.rewardfiles = open("DDQL_5phut_env_"+ str(i) +".csv","w")
-            self.quality_result_file = open("n_quality_tasks_ddql_"+ str(i) +".csv","w")
+            self.rewardfiles = open("./csvFiles/DDQL_5phut_env_"+ str(i) +".csv","w")
+            self.quality_result_file = open("./csvFiles/n_quality_tasks_ddql_"+ str(i) +".csv","w")
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_ddql_"+ str(i) +".csv"),"w")
-            self.node_computing = open("chiatask_ddql_"+ str(i) +".csv","w")
+            self.node_computing = open("./csvFiles/chiatask_ddql_"+ str(i) +".csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
 
     def readexcel(self, number_bus, time):

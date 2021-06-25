@@ -5,7 +5,8 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Lambda, Input, Layer, Dense
 
-from rl.core import Agent
+from core_mec import Agent
+# from rl.core import Agent
 from policy import EpsGreedyQPolicy
 from rl.util import *
 
@@ -248,9 +249,9 @@ class DQNAgent(AbstractDQNAgent):
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action = self.policy.select_action(q_values=q_values)
-            if self.estimate_reward(action,observation)>0.8:
-                action = action
+            action2 = self.policy.select_action(q_values=q_values)
+            if self.estimate_reward(action2,observation)>0.6:
+                action = action2
                 self.files.write("0\n")
                 #print("A")
             else:
@@ -263,7 +264,7 @@ class DQNAgent(AbstractDQNAgent):
         self.recent_observation = observation
         self.recent_action = action
 
-        return action
+        return action, action2
 
     def backward(self, reward, terminal):
         # Store most recent experience in memory.
@@ -395,3 +396,4 @@ class DQNAgent(AbstractDQNAgent):
     def test_policy(self, policy):
         self.__test_policy = policy
         self.__test_policy._set_agent(self)
+    
