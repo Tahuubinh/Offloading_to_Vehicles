@@ -47,6 +47,8 @@ class BusEnv(gym.Env):
                 ,self.readexcel(902,self.queue[0][0]),0,1,\
                 0,3,\
                 self.queue[0][1],self.queue[0][2],self.queue[0][4]])
+            self.observation[11]/= 1024
+            self.observation[12]/= 1024
         else:
             self.index_of_episode = -1
             self.observation = np.array([-1])
@@ -153,13 +155,15 @@ class BusEnv(gym.Env):
         return distance
 
     def step(self, action):
+        # for i in observation:
+        #     print(observation)
         time_delay = 0
         
         #logic block when computing node is bus node
         if action>0 and action<4:
             Rate_trans_req_data = (10*np.log2(1+46/(np.power(self.observation[(action-1)*3],4)*100))) / 8
             #print(Rate_trans_req_data)
-            self.observation[1+(action-1)*3] =  self.observation[11]/(self.observation[2+(action-1)*3]*1000) + max(self.observation[12]/(1000*Rate_trans_req_data),self.observation[1+(action-1)*3])
+            self.observation[1+(action-1)*3] =  self.observation[11]/(self.observation[2+(action-1)*3]) + max(self.observation[12]/(Rate_trans_req_data),self.observation[1+(action-1)*3])
             #print(self.observation[1+(action-1)*3])
 
             distance_response = self.readexcel(900+action-1,self.observation[1+(action-1)*3]+self.time)
@@ -169,7 +173,7 @@ class BusEnv(gym.Env):
         
         #logic block when computing node is server
         if action == 0:
-            self.observation[9] += self.observation[11]/(self.observation[10]*1000.0)
+            self.observation[9] += self.observation[11]/(self.observation[10])
             #import pdb;pdb.set_trace()
 
             time_delay = self.observation[9]
@@ -204,13 +208,17 @@ class BusEnv(gym.Env):
             self.data = self.data[self.data[:,0]!=self.data[0,0]]
         
         if len(self.queue)!=0:
-            self.observation[11] = self.queue[0][1]
-            self.observation[12] = self.queue[0][2]
+            self.observation[11] = self.queue[0][1]/1024
+            self.observation[12] = self.queue[0][2]/1024
             self.observation[13] = self.queue[0][4]
         
         #check end of episode?
         done = len(self.queue) == 0 and len(self.data) == 0
+        # for i in observation:
+        #     print(observation)
         if done:
+            # for i in self.observation:
+            #     print(i)
             print(self.n_tasks_in_node)
             self.configuration_result_file.write(str(self.n_tasks_in_node[0])+","+str(self.n_tasks_in_node[1])+","+str(self.n_tasks_in_node[2])+","+str(self.n_tasks_in_node[3])+","+"\n")
             self.quality_result_file.write("{},{},{}\n".format(self.n_quality_tasks[0],self.n_quality_tasks[1],self.n_quality_tasks[2]))
@@ -282,6 +290,8 @@ class BusEnv(gym.Env):
              self.queue[0][4]])
         self.time_last = self.data[-1][0]
 
+        self.observation[11]/= 1024
+        self.observation[12]/= 1024
         return self.observation
         
     def render(self,mode='human'):

@@ -197,6 +197,6 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            Run_FDQO('dense_0.6_test')
+            Run_DDQL('dense_0.6_test12')
         except:
             continue
