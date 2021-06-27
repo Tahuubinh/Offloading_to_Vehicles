@@ -6,7 +6,8 @@ path =os.path.abspath(__file__)
 path =Path(path).parent.parent
 for i in range(502):
     with open("{}/{}/datatask{}.csv".format(str(path),"data_task",i),"w") as output:
-        indexs=rd.randint(900,1200)
+        # indexs=rd.randint(900,1200)
+        indexs=rd.randint(1400,1500)
         m = np.sort(np.random.randint(i*300,(i+1)*300,indexs))
         m1 = np.random.randint(1000,2000,indexs)
         m2 = np.random.randint(100,200,indexs)
