@@ -198,7 +198,7 @@ if __name__=="__main__":
     for i in range(0,1):
         try:
             #Run_DQL(3)
-            Run_FDQO("3_0.8")
+            Run_FDQO("3_0.2")
             # Run_FDQO(3)
         except:
             continue

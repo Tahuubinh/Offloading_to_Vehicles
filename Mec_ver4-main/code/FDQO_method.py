@@ -249,9 +249,9 @@ class DQNAgent(AbstractDQNAgent):
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action2 = self.policy.select_action(q_values=q_values)
-            if self.estimate_reward(action2,observation)>0.8:
-                action = action2
+            action = self.policy.select_action(q_values=q_values)
+            if self.estimate_reward(action,observation)>0.2:
+                action = action
                 self.files.write("0\n")
                 #print("A")
             else:
@@ -264,7 +264,7 @@ class DQNAgent(AbstractDQNAgent):
         self.recent_observation = observation
         self.recent_action = action
 
-        return action, action2
+        return action, action
 
     def backward(self, reward, terminal):
         # Store most recent experience in memory.
