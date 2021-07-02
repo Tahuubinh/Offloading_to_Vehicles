@@ -1,2 +1,2 @@
-model_checkpoint_path: "weight_FDQO_3_0.2.h5f"
-all_model_checkpoint_paths: "weight_FDQO_3_0.2.h5f"
+model_checkpoint_path: "weight_FDQO_rule3_0.8.h5f"
+all_model_checkpoint_paths: "weight_FDQO_rule3_0.8.h5f"
