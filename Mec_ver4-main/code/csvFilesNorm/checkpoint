@@ -1,0 +1,2 @@
+model_checkpoint_path: "weight_FDQO_fuzzy_exploitation_70k_exploration_0.2.h5f"
+all_model_checkpoint_paths: "weight_FDQO_fuzzy_exploitation_70k_exploration_0.2.h5f"

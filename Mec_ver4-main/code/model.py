@@ -4,7 +4,7 @@ from tensorflow.keras.layers import (Activation, Concatenate, Dense, Dropout,
 from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.optimizers import Adam
 from FDQO_method import DQNAgent
-from policy import EpsGreedyQPolicy
+from policy import EpsGreedyQPolicy, EpsGreedyFuzzyPolicy
 from config import Config
 from rl.memory import SequentialMemory
 
@@ -22,7 +22,7 @@ class Model_Deep_Q_Learning:
         output = Dense(self.num_actions, activation='linear')(x)
         model = Model(inputs=input, outputs=output)
         model.summary()
-        policy =EpsGreedyQPolicy(0.0)
+        policy =EpsGreedyFuzzyPolicy(0.1, linear_decrease = 0.1, step_to_decrease = 70000)
         dqn = DQNAgent(model=model, nb_actions=self.num_actions, memory=self.memory, nb_steps_warmup=10,\
               target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=2)
         return dqn

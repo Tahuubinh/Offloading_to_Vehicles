@@ -31,7 +31,7 @@ from callback import *
 from fuzzy_controller import *
 import os
 
-from rl.agents.dqn import DQNAgent
+from dqnMEC import DQNAgent
 
 os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 def Run_Random():
@@ -117,7 +117,7 @@ def build_model(state_size, num_actions):
 def Run_DQL(i):
     model=build_model(14,4)
     num_actions = 4
-    policy = EpsGreedyQPolicy(0.1)
+    policy = EpsGreedyQPolicy(0.1, linear_decrease = 0.1, step_to_decrease = 70000)
     env = BusEnv("DQL")
     env.modifyEnv(i)
     env.seed(123)
@@ -128,11 +128,11 @@ def Run_DQL(i):
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("./csvFiles2/DQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("./csvFiles2/weight_DQL_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFilesNorm/DQL_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
@@ -150,11 +150,11 @@ def Run_DDQL(i):
     files = open("testDDQL.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("./csvFiles2/DDQL_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("./csvFiles2/weight_DDQL_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFilesNorm/DDQL_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
@@ -172,11 +172,11 @@ def Run_FDQO(i):
     files = open("testFDQO.csv","w")
     files.write("kq\n")
     #create callback
-    callbacks = CustomerTrainEpisodeLogger("./csvFiles2/FDQO_5phut_"+ str(i) +".csv")
-    callback2 = ModelIntervalCheckpoint("./csvFiles2/weight_FDQO_"+ str(i) +".h5f",interval=50000)
+    callbacks = CustomerTrainEpisodeLogger("./csvFilesNorm/FDQO_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    model.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
@@ -197,8 +197,8 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            #Run_DQL(3)
-            Run_FDQO("rule3_0.8")
-            # Run_FDQO(3)
+            #Run_DQL("0.1_de_0.1_70")
+            #Run_DDQL(2_1)
+            Run_FDQO("fuzzy_exploitation_70k_exploration_0.2")
         except:
             continue

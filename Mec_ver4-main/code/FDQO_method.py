@@ -5,7 +5,7 @@ import tensorflow.keras.backend as K
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Lambda, Input, Layer, Dense
 
-from core_mec import Agent
+from coreMEC import Agent
 # from rl.core import Agent
 from policy import EpsGreedyQPolicy
 from rl.util import *
@@ -244,19 +244,37 @@ class DQNAgent(AbstractDQNAgent):
         #self.n_tasks_in_node[action] = self.n_tasks_in_node[action]+1
         reward = max(0,min((2*observation[13]-time_delay)/observation[13],1))
         return reward
-    def forward(self, observation):
+    def forward(self, observation, step = 0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action = self.policy.select_action(q_values=q_values)
-            if self.estimate_reward(action,observation)>0.8:
-                action = action
-                self.files.write("0\n")
-                #print("A")
+            action, exploration = self.policy.select_action(q_values=q_values)
+            # if step < 8000:
+            #     if self.estimate_reward(action,observation)>=0.8:
+            #         action = action
+            #         self.files.write("0\n")
+            #         #print("A")
+            #     else:
+            #         action = self.fuzzy_logic.choose_action(observation)
+            #         self.files.write("1\n")
+            # else:
+            #     self.files.write("0\n")
+            
+            if exploration == False:
+                if self.estimate_reward(action,observation)>=0.8:
+                    action = action
+                    self.files.write("0\n")
+                else:
+                    action = self.fuzzy_logic.choose_action(observation)
+                    self.files.write("1\n")
             else:
-                action = self.fuzzy_logic.choose_action(observation)
-                self.files.write("1\n")
+                if self.estimate_reward(action,observation)>=0.2:
+                    action = action
+                    self.files.write("0\n")
+                else:
+                    action = self.fuzzy_logic.choose_action(observation)
+                    self.files.write("1\n")
         else:
             action = self.test_policy.select_action(q_values=q_values)
 
@@ -264,7 +282,7 @@ class DQNAgent(AbstractDQNAgent):
         self.recent_observation = observation
         self.recent_action = action
 
-        return action, action
+        return action
 
     def backward(self, reward, terminal):
         # Store most recent experience in memory.
