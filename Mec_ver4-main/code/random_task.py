@@ -7,7 +7,7 @@ path =Path(path).parent.parent
 for i in range(200):
     with open("{}/{}/datatask{}.csv".format(str(path),"data_task",i),"w") as output:
         # indexs=rd.randint(900,1200)
-        indexs=rd.randint(1100,1200)
+        indexs=rd.randint(700,800)
         # m = np.sort(np.random.randint(i*300,(i+1)*300,indexs))
         randomNums = np.random.normal(i*300+150, 50, size=indexs)
         m = np.round(randomNums)

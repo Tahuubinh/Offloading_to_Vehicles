@@ -22,7 +22,7 @@ class Model_Deep_Q_Learning:
         output = Dense(self.num_actions, activation='linear')(x)
         model = Model(inputs=input, outputs=output)
         model.summary()
-        policy =EpsGreedyFuzzyPolicy(0.1, linear_decrease = 0.1, step_to_decrease = 70000)
+        policy =EpsGreedyQPolicy(0.0) #EpsGreedyFuzzyPolicy must have select_action
         dqn = DQNAgent(model=model, nb_actions=self.num_actions, memory=self.memory, nb_steps_warmup=10,\
               target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=2)
         return dqn

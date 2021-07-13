@@ -117,7 +117,7 @@ def build_model(state_size, num_actions):
 def Run_DQL(i):
     model=build_model(14,4)
     num_actions = 4
-    policy = EpsGreedyQPolicy(0.1, linear_decrease = 0.1, step_to_decrease = 70000)
+    policy = EpsGreedyQPolicy(0.05)
     env = BusEnv("DQL")
     env.modifyEnv(i)
     env.seed(123)
@@ -132,7 +132,7 @@ def Run_DQL(i):
     callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 125000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i):
@@ -154,7 +154,7 @@ def Run_DDQL(i):
     callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 125000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
 
 def Run_FDQO(i):
@@ -176,7 +176,7 @@ def Run_FDQO(i):
     callback2 = ModelIntervalCheckpoint("./csvFilesNorm/weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 150000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    model.fit(env, nb_steps= 125000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
@@ -197,8 +197,8 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            #Run_DQL("0.1_de_0.1_70")
-            #Run_DDQL(2_1)
-            Run_FDQO("fuzzy_exploitation_70k_exploration_0.2")
+            Run_DQL("second_base_0.3")
+            # Run_DDQL("third_1")
+            #Run_FDQO("third_0.8")
         except:
             continue

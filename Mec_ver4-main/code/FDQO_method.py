@@ -249,32 +249,30 @@ class DQNAgent(AbstractDQNAgent):
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action, exploration = self.policy.select_action(q_values=q_values)
-            # if step < 8000:
+            action = self.policy.select_action(q_values=q_values)
+        
+            if self.estimate_reward(action,observation)>0.8:
+                action = action
+                self.files.write("0\n")
+                #print("A")
+            else:
+                action = self.fuzzy_logic.choose_action(observation)
+                self.files.write("1\n")
+            
+            # if exploration == False:
             #     if self.estimate_reward(action,observation)>=0.8:
             #         action = action
             #         self.files.write("0\n")
-            #         #print("A")
             #     else:
             #         action = self.fuzzy_logic.choose_action(observation)
             #         self.files.write("1\n")
             # else:
-            #     self.files.write("0\n")
-            
-            if exploration == False:
-                if self.estimate_reward(action,observation)>=0.8:
-                    action = action
-                    self.files.write("0\n")
-                else:
-                    action = self.fuzzy_logic.choose_action(observation)
-                    self.files.write("1\n")
-            else:
-                if self.estimate_reward(action,observation)>=0.2:
-                    action = action
-                    self.files.write("0\n")
-                else:
-                    action = self.fuzzy_logic.choose_action(observation)
-                    self.files.write("1\n")
+            #     if self.estimate_reward(action,observation)>=0.2:
+            #         action = action
+            #         self.files.write("0\n")
+            #     else:
+            #         action = self.fuzzy_logic.choose_action(observation)
+            #         self.files.write("1\n")
         else:
             action = self.test_policy.select_action(q_values=q_values)
 

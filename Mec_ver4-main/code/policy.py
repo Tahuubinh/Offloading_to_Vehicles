@@ -72,11 +72,13 @@ class EpsGreedyQPolicy(Policy):
                 else:
                     self.eps = 0
                     print(self.eps)
+        exploit = False
         if np.random.uniform() < self.eps:
             action = np.random.randint(0, nb_actions)
         else:
+            exploit = True
             action = np.argmax(q_values)
-        return action
+        return action, exploit
     
     def select_linear_desceasing_action(self, q_values, step):
         """Return the selected action

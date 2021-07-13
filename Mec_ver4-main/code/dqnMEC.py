@@ -218,13 +218,39 @@ class DQNAgent(AbstractDQNAgent):
 
     def update_target_model_hard(self):
         self.target_model.set_weights(self.model.get_weights())
+        
+    def estimate_reward(self, action, observation ):
+        time_delay = 0
+        #logic block when computing node is bus node
+        if action>0 and action<4:
+            Rate_trans_req_data = (10*np.log2(1+46/(np.power(observation[(action-1)*3],4)*100))) / 8
+            time_delay =  observation[11]/(1000*observation[2+(action-1)*3]) + max(observation[12]/(Rate_trans_req_data*1000),observation[1+(action-1)*3])
+
+            #distance_response = self.readexcel(900+action-1,self.observation[1+(action-1)*3]+self.time)
+            #Rate_trans_res_data = (10*np.log2(1+46/(np.power(distance_response,4)*100)))/8
+            #time_delay = (self.observation[1+(action-1)*3]+self.queue[0][3]/(Rate_trans_res_data*1000))
+            #self.node_computing.write("{},{},{},{},{},{}".format(action,self.observation[(action-1)*3],self.observation[9],self.observation[1],self.observation[4],self.observation[7]))
+        
+        #logic block when computing node is server
+        if action == 0 :
+            time_delay = observation[11]/(observation[10]*1000)
+            #print(observation[11]/(1000*observation[2+(action-1)*3]))
+            #print(time_delay)
+            #import pdb;pdb.set_trace()
+            #self.node_computing.write("{},{},{},{},{},{}".format(action,0,self.observation[9],self.observation[1],self.observation[4],self.observation[7]))
+        
+        #self.n_tasks_in_node[action] = self.n_tasks_in_node[action]+1
+        reward = max(0,min((2*observation[13]-time_delay)/observation[13],1))
+        return reward
 
     def forward(self, observation, step = 0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action = self.policy.select_action(q_values=q_values, step = step)
+            action, exploit = self.policy.select_action(q_values=q_values, step = step)
+            if exploit and action < 0.2:
+                action, _ = self.policy.select_action(q_values=q_values, step = step)
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
 
