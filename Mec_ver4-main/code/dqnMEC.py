@@ -145,6 +145,9 @@ class DQNAgent(AbstractDQNAgent):
             test_policy = GreedyQPolicy()
         self.policy = policy
         self.test_policy = test_policy
+        
+        if self.enable_double_dqn==False:
+            self.files = open("./csvPoisson/kqDQN.csv","w")
 
         # State.
         self.reset_states()
@@ -249,8 +252,18 @@ class DQNAgent(AbstractDQNAgent):
         q_values = self.compute_q_values(state)
         if self.training:
             action, exploit = self.policy.select_action(q_values=q_values, step = step)
-            if exploit and action < 0.2:
-                action, _ = self.policy.select_action(q_values=q_values, step = step)
+            # if exploit:
+            #     if action < 0.2:
+            #         action, ext = self.policy.select_action(q_values=q_values, step = step)
+            #         if ext:
+            #             self.files.write("0\n")
+            #         else:
+            #             self.files.write("1\n")
+            #     else:
+            #         self.files.write("0\n")
+            # else:
+            #     self.files.write("1\n")
+            #     pass
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
 

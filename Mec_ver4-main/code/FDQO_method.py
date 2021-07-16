@@ -249,9 +249,9 @@ class DQNAgent(AbstractDQNAgent):
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action = self.policy.select_action(q_values=q_values)
+            action, _ = self.policy.select_action(q_values=q_values)
         
-            if self.estimate_reward(action,observation)>0.8:
+            if self.estimate_reward(action,observation)>1:
                 action = action
                 self.files.write("0\n")
                 #print("A")
