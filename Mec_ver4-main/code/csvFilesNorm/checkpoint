@@ -1,2 +1,2 @@
-model_checkpoint_path: "weight_DQL_second_base_0.2.h5f"
-all_model_checkpoint_paths: "weight_DQL_second_base_0.2.h5f"
+model_checkpoint_path: "weight_DQL_M900_1000_1_0.2.h5f"
+all_model_checkpoint_paths: "weight_DQL_M900_1000_1_0.2.h5f"

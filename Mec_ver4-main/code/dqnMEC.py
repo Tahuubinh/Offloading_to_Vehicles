@@ -99,7 +99,7 @@ class DQNAgent(AbstractDQNAgent):
             `max`: Q(s,a;theta) = V(s;theta) + (A(s,a;theta)-max_a(A(s,a;theta)))
             `naive`: Q(s,a;theta) = V(s;theta) + A(s,a;theta)
     """
-    def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
+    def __init__(self, model, policy=None, policy2=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
                  dueling_type='avg', *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
 
@@ -141,13 +141,16 @@ class DQNAgent(AbstractDQNAgent):
         self.model = model
         if policy is None:
             policy = EpsGreedyQPolicy()
+        if policy2 is None:
+            policy2 = EpsGreedyQPolicy(0)
         if test_policy is None:
             test_policy = GreedyQPolicy()
         self.policy = policy
         self.test_policy = test_policy
+        self.policy2 = policy2
         
         if self.enable_double_dqn==False:
-            self.files = open("./csvPoisson/kqDQN.csv","w")
+            self.files = open("./csvFilesNorm/kqDQN.csv","w")
 
         # State.
         self.reset_states()
@@ -252,18 +255,18 @@ class DQNAgent(AbstractDQNAgent):
         q_values = self.compute_q_values(state)
         if self.training:
             action, exploit = self.policy.select_action(q_values=q_values, step = step)
-            # if exploit:
-            #     if action < 0.2:
-            #         action, ext = self.policy.select_action(q_values=q_values, step = step)
-            #         if ext:
-            #             self.files.write("0\n")
-            #         else:
-            #             self.files.write("1\n")
-            #     else:
-            #         self.files.write("0\n")
-            # else:
-            #     self.files.write("1\n")
-            #     pass
+            if exploit:
+                if action < 0.2:
+                    action, ext = self.policy2.select_action(q_values=q_values, step = step)
+                    if ext:
+                        self.files.write("0\n")
+                    else:
+                        self.files.write("1\n")
+                else:
+                    self.files.write("0\n")
+            else:
+                self.files.write("1\n")
+                pass
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
 
