@@ -251,7 +251,7 @@ class DQNAgent(AbstractDQNAgent):
         if self.training:
             action, _ = self.policy.select_action(q_values=q_values)
         
-            if self.estimate_reward(action,observation)>0.2:
+            if self.estimate_reward(action,observation)>0.9:
                 action = action
                 self.files.write("0\n")
                 #print("A")

@@ -167,8 +167,6 @@ def Run_FDQO(i):
     env.seed(123)
     #create memory
     memory = SequentialMemory(limit=5000, window_length=1)
-    #create policy 
-    policy = EpsGreedyQPolicy(0.0)
     #open files
     files = open("testFDQO.csv","w")
     files.write("kq\n")
@@ -198,8 +196,8 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            Run_DQL("M900_1000_1_0.2")
+            #Run_DQL("test")
             #Run_DDQL("M900_1000_1_under")
-            #Run_FDQO("M900_1000_0.2")
+            Run_FDQO("M900_1000_0.9_exlre0.1")
         except:
             continue
