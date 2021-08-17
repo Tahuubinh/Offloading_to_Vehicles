@@ -52,7 +52,7 @@ class Agent(object):
 
     def fit(self, env, nb_steps, action_repetition=1, callbacks=None, verbose=1,
             visualize=False, nb_max_start_steps=0, start_step_policy=None, log_interval=10000,
-            nb_max_episode_steps=None):
+            nb_max_episode_steps=None, baseline = 0.8, eps = 0.9):
         """Trains the agent on the given environment.
 
         # Arguments
@@ -120,6 +120,12 @@ class Agent(object):
         episode_reward = None
         episode_step = None
         did_abort = False
+        
+        # other initiations
+        # self.baseline = baseline
+        # self.eps = eps
+        # end other initiations
+        
         try:
             while self.step < nb_steps:
                 if observation is None:  # start of a new episode
@@ -166,7 +172,7 @@ class Agent(object):
                 callbacks.on_step_begin(episode_step)
                 # This is were all of the work happens. We first perceive and compute the action
                 # (forward step) and then use the reward to improve (backward step).
-                action = self.forward(observation, self.step)
+                action = self.forward(observation, self.step, baseline, eps)
                 if self.processor is not None:
                     action = self.processor.process_action(action)
                 reward = np.float32(0)
@@ -212,7 +218,7 @@ class Agent(object):
                     # resetting the environment. We need to pass in `terminal=False` here since
                     # the *next* state, that is the state of the newly reset environment, is
                     # always non-terminal by convention.
-                    self.forward(observation, self.step)
+                    self.forward(observation, self.step, baseline, eps)
                     self.backward(0., terminal=False)
 
                     # This episode is finished, report and reset.

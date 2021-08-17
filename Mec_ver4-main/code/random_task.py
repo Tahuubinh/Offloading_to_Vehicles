@@ -27,7 +27,7 @@ for i in range(200):
     with open("{}/{}/datatask{}.csv".format(str(path),"data_task",i),"w") as output:
         # indexs=rd.randint(900,1200)
         # indexs=rd.randint(int(a[i]-50),int(a[i]+50))
-        indexs=rd.randint(900,1000)
+        indexs=rd.randint(1200,1400)
         # m = np.sort(np.random.randint(i*300,(i+1)*300,indexs))
         randomNums = np.random.normal(i*300+150, 50, size=indexs)
         m = np.round(randomNums)

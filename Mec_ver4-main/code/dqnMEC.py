@@ -249,24 +249,24 @@ class DQNAgent(AbstractDQNAgent):
         reward = max(0,min((2*observation[13]-time_delay)/observation[13],1))
         return reward
 
-    def forward(self, observation, step = 0):
+    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
             action, exploit = self.policy.select_action(q_values=q_values, step = step)
-            if exploit:
-                if action < 0.2:
-                    action, ext = self.policy2.select_action(q_values=q_values, step = step)
-                    if ext:
-                        self.files.write("0\n")
-                    else:
-                        self.files.write("1\n")
-                else:
-                    self.files.write("0\n")
-            else:
-                self.files.write("1\n")
-                pass
+            # if exploit:
+            #     if action < 0.2:
+            #         action, ext = self.policy2.select_action(q_values=q_values, step = step)
+            #         if ext:
+            #             self.files.write("0\n")
+            #         else:
+            #             self.files.write("1\n")
+            #     else:
+            #         self.files.write("0\n")
+            # else:
+            #     self.files.write("1\n")
+            #     pass
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
 
