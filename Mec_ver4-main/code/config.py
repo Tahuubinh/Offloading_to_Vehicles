@@ -6,7 +6,7 @@ LINK_PROJECT = LINK_PROJECT.parent.parent
 #print(LINK_PROJECT)
 DATA_DIR = os.path.join(LINK_PROJECT, "data")
 RESULT_DIR = os.path.join(LINK_PROJECT, "result")
-DATA_TASK = os.path.join(LINK_PROJECT, "data_task/200 normal task 1200 - 1400")
+DATA_TASK = os.path.join(LINK_PROJECT, "data_task/200 normal task 900 - 1000")
 class Config:
     Pr = 46
     Pr2 = 24

@@ -149,8 +149,8 @@ class DQNAgent(AbstractDQNAgent):
         self.test_policy = test_policy
         self.policy2 = policy2
         
-        if self.enable_double_dqn==False:
-            self.files = open("./csvFilesNorm/kqDQN.csv","w")
+        # if self.enable_double_dqn==False:
+        #     self.files = open("./csvFilesNorm/kqBDQN.csv","w")
 
         # State.
         self.reset_states()
@@ -795,3 +795,33 @@ class NAFAgent(AbstractDQNAgent):
 
 # Aliases
 ContinuousDQNAgent = NAFAgent
+class BDQNAgent(DQNAgent):
+    def __init__(self, i, file, *args, **kwargs):
+        super(BDQNAgent, self).__init__(*args, **kwargs)
+        self.files = open("./"+ str(file) +"/kqBDQN_"+ str(i) +".csv","w")
+    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0):
+        # Select an action.
+        state = self.memory.get_recent_state(observation)
+        q_values = self.compute_q_values(state)
+        if self.training:
+            action, exploit = self.policy.select_action(q_values=q_values, step = step)
+            if exploit:
+                if action < baseline:
+                    action, ext = self.policy2.select_action(q_values=q_values, step = step)
+                    if ext:
+                        self.files.write("0\n")
+                    else:
+                        self.files.write("1\n")
+                else:
+                    self.files.write("0\n")
+            else:
+                self.files.write("1\n")
+                pass
+        else:
+            action = self.test_policy.select_action(q_values=q_values, step = step)
+
+        # Book-keeping.
+        self.recent_observation = observation
+        self.recent_action = action
+
+        return action

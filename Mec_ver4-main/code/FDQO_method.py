@@ -98,7 +98,7 @@ class DQNAgent(AbstractDQNAgent):
             `naive`: Q(s,a;theta) = V(s;theta) + A(s,a;theta)
     """
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
-                 dueling_type='avg', *args, **kwargs):
+                 dueling_type='avg', i = None, file = None, *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
 
         # Validate (important) input.
@@ -107,7 +107,7 @@ class DQNAgent(AbstractDQNAgent):
                              mat(model.output, self.nb_actions))
 
         # Parameters.
-        self.files = open("kq.csv","w")
+        self.files = open("./"+ str(file) +"/kqFDQO_"+ str(i) +".csv","w")
 
         self.fuzzy_logic = Fuzzy_Controller()
         self.enable_double_dqn = enable_double_dqn

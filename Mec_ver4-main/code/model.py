@@ -14,7 +14,7 @@ class Model_Deep_Q_Learning:
         self.num_actions=num_actions
         self.memory = SequentialMemory(limit=5000, window_length=1)
 
-    def build_model(self, epsilon = .1):
+    def build_model(self, epsilon = .1, i = None, file = None):
         input = Input(shape=(1,self.state_size))
         x = Flatten()(input)
         for i in range(Config.length_hidden_layer):
@@ -24,5 +24,6 @@ class Model_Deep_Q_Learning:
         model.summary()
         policy =EpsGreedyQPolicy(epsilon) #EpsGreedyFuzzyPolicy must have select_action
         dqn = DQNAgent(model=model, nb_actions=self.num_actions, memory=self.memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=2)
+              target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=2,
+              i = i, file = file)
         return dqn
