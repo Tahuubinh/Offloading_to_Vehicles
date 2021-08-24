@@ -172,7 +172,9 @@ class Agent(object):
                 callbacks.on_step_begin(episode_step)
                 # This is were all of the work happens. We first perceive and compute the action
                 # (forward step) and then use the reward to improve (backward step).
-                action = self.forward(observation, self.step, baseline, eps)
+                # delays = env.dict_of_vehicular_delay()
+                avg_reward = env.get_average_reward()
+                action = self.forward(observation, self.step, baseline, eps, avg_reward)
                 if self.processor is not None:
                     action = self.processor.process_action(action)
                 reward = np.float32(0)
@@ -218,7 +220,7 @@ class Agent(object):
                     # resetting the environment. We need to pass in `terminal=False` here since
                     # the *next* state, that is the state of the newly reset environment, is
                     # always non-terminal by convention.
-                    self.forward(observation, self.step, baseline, eps)
+                    self.forward(observation, self.step, baseline, eps, avg_reward)
                     self.backward(0., terminal=False)
 
                     # This episode is finished, report and reset.

@@ -7,6 +7,7 @@ from tensorflow.keras.layers import Lambda, Input, Layer, Dense
 
 from coreMEC import Agent
 from rl.policy import EpsGreedyQPolicy, GreedyQPolicy
+from policy import DynamicExpForBDQL
 from rl.util import *
 
 
@@ -92,6 +93,7 @@ class DQNAgent(AbstractDQNAgent):
         model__: A Keras model.
         policy__: A Keras-rl policy that are defined in [policy](https://github.com/keras-rl/keras-rl/blob/master/rl/policy.py).
         test_policy__: A Keras-rl policy.
+        policy must return both action end exploration
         enable_double_dqn__: A boolean which enable target network as a second network proposed by van Hasselt et al. to decrease overfitting.
         enable_dueling_dqn__: A boolean which enable dueling architecture proposed by Mnih et al.
         dueling_type__: If `enable_dueling_dqn` is set to `True`, a type of dueling architecture must be chosen which calculate Q(s,a) from V(s) and A(s,a) differently. Note that `avg` is recommanded in the [paper](https://arxiv.org/abs/1511.06581).
@@ -225,21 +227,23 @@ class DQNAgent(AbstractDQNAgent):
     def update_target_model_hard(self):
         self.target_model.set_weights(self.model.get_weights())
         
-    def estimate_reward(self, action, observation ):
+    def estimate_reward(self, action, observation, delays):
         time_delay = 0
         #logic block when computing node is bus node
         if action>0 and action<4:
-            Rate_trans_req_data = (10*np.log2(1+46/(np.power(observation[(action-1)*3],4)*100))) / 8
-            time_delay =  observation[11]/(1000*observation[2+(action-1)*3]) + max(observation[12]/(Rate_trans_req_data*1000),observation[1+(action-1)*3])
-
-            #distance_response = self.readexcel(900+action-1,self.observation[1+(action-1)*3]+self.time)
-            #Rate_trans_res_data = (10*np.log2(1+46/(np.power(distance_response,4)*100)))/8
-            #time_delay = (self.observation[1+(action-1)*3]+self.queue[0][3]/(Rate_trans_res_data*1000))
+            # Rate_trans_req_data = (10*np.log2(1+46/(np.power(observation[(action-1)*3],4)*100))) / 8
+            # time_delay =  observation[11]/(observation[2+(action-1)*3]) + max(observation[12]/(Rate_trans_req_data),observation[1+(action-1)*3])
+            # distance_response = self.readexcel(900+action-1,observation[1+(action-1)*3]+self.time)
+            # Rate_trans_res_data = (10*np.log2(1+46/(np.power(distance_response,4)*100)))/8
+            # time_delay = observation[1+(action-1)*3]+self.queue[0][3]/(Rate_trans_res_data*1000)
+            # distance_response = self.readexcel(900+action-1,self.observation[1+(action-1)*3]+self.time)
+            # Rate_trans_res_data = (10*np.log2(1+46/(np.power(distance_response,4)*100)))/8
+            # time_delay = (self.observation[1+(action-1)*3]+self.queue[0][3]/(Rate_trans_res_data*1000))
             #self.node_computing.write("{},{},{},{},{},{}".format(action,self.observation[(action-1)*3],self.observation[9],self.observation[1],self.observation[4],self.observation[7]))
-        
+            time_delay = delays[str(action)]
         #logic block when computing node is server
         if action == 0 :
-            time_delay = observation[11]/(observation[10]*1000)
+            time_delay = observation[11]/(observation[10])
             #print(observation[11]/(1000*observation[2+(action-1)*3]))
             #print(time_delay)
             #import pdb;pdb.set_trace()
@@ -799,27 +803,43 @@ class BDQNAgent(DQNAgent):
     def __init__(self, i, file, *args, **kwargs):
         super(BDQNAgent, self).__init__(*args, **kwargs)
         self.files = open("./"+ str(file) +"/kqBDQN_"+ str(i) +".csv","w")
-    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0):
+        # self.average_reward = 0
+        # self.t = 0
+        # self.sumreward = 0
+    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0, avg_reward = 0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
         if self.training:
-            action, exploit = self.policy.select_action(q_values=q_values, step = step)
-            if exploit:
-                if action < baseline:
-                    action, ext = self.policy2.select_action(q_values=q_values, step = step)
-                    if ext:
-                        self.files.write("0\n")
-                    else:
-                        self.files.write("1\n")
-                else:
-                    self.files.write("0\n")
+            action, ext = self.policy.select_action(q_values=q_values, step = step)
+            if avg_reward > baseline:
+                action, ext = self.policy2.select_action(q_values=q_values, step = step)
+                # Using for dynamic exploration
+                #action, ext = self.policy2.select_action(q_values=q_values, action=action)
+            #     if ext:
+            #         self.files.write("0\n")
+            #     else:
+            #         self.files.write("1\n")
+            # else:
+            #     self.files.write("0\n")
+            if ext:
+                self.files.write("0\n")
             else:
                 self.files.write("1\n")
-                pass
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
-
+        
+        #new_reward = self.estimate_reward(action,observation, delays)
+        #self.average_reward = (self.t * self.average_reward + new_reward)/(self.t + 1)
+        # self.sumreward += new_reward
+        # self.t += 1
+        # self.average_reward = self.sumreward / self.t
+        # if self.t % 10000 == 0:
+        #     print(self.t, self.average_reward)
+        # print(self.t, self.sumreward, new_reward, action)
+        #print(avg_reward)
+        
+    
         # Book-keeping.
         self.recent_observation = observation
         self.recent_action = action

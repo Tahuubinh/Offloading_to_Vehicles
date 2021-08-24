@@ -138,9 +138,10 @@ def Run_DQL(i, file):
 def Run_BDQL(i, file):
     model=build_model(14,4)
     num_actions = 4
-    policy = EpsGreedyQPolicy(0.05)
-    policy2 = EpsGreedyQPolicy(0.15)
-    env = BusEnv("DQL")
+    baseline = 0.6
+    policy = EpsGreedyQPolicy(0.1)
+    policy2 = EpsGreedyQPolicy(0.05)
+    env = BusEnv("BDQL")
     env.modifyEnv(i, file)
     env.seed(123)
     memory = SequentialMemory(limit=25000, window_length=1)
@@ -156,7 +157,7 @@ def Run_BDQL(i, file):
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
     dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
-            baseline = 0.2)
+            baseline = baseline)
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_DDQL(i, file):
@@ -183,13 +184,13 @@ def Run_DDQL(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    model = FDQO_method.build_model(epsilon = 0.0, i = i, file = file)
+    model = FDQO_method.build_model(epsilon = 0.05, name = i, file = file)
     #Create enviroment FDQO
     env = BusEnv("FDQO")
     env.modifyEnv(i, file)
     env.seed(123)
     #create memory
-    memory = SequentialMemory(limit=25000, window_length=1)
+    memory = SequentialMemory(limit=5000, window_length=1)
     #open files
     files = open("testFDQO.csv","w")
     files.write("kq\n")
@@ -222,8 +223,8 @@ if __name__=="__main__":
     for i in range(0,1):
         try:
             #Run_DQL("M900_1000_memory25000", file)
-            Run_BDQL("M900_1000_0.05_0.15_mem25000", file)
-            #Run_DDQL("M900_1000_1", file)
-            #Run_FDQO("M900_1000_0.9_fuzzy1_mem25", file)
+            Run_BDQL("M900_1000_0.1_0.05_b0.6_fix_2", file)
+            #Run_DDQL("M900_1000_mem25_2", file)
+            #Run_FDQO("M900_1000_0.9_exp0.05", file)
         except:
             continue

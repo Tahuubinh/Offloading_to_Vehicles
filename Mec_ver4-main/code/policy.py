@@ -113,6 +113,48 @@ class EpsGreedyQPolicy(Policy):
         config = super(EpsGreedyQPolicy, self).get_config()
         config['eps'] = self.eps
         return config
+    
+class DynamicExpForBDQL(Policy):
+    """Implement the epsilon greedy policy
+
+    Eps Greedy policy either:
+
+    - takes a random action with probability epsilon
+    - takes current best action with prob (1 - epsilon)
+    """
+    def __init__(self, baseline=.1):
+        super(DynamicExpForBDQL, self).__init__()
+        self.baseline = baseline
+
+    def select_action(self, q_values, action):
+        """Return the selected action
+
+        # Arguments
+            q_values (np.ndarray): List of the estimations of Q for each action
+
+        # Returns
+            Selection action
+        """
+        assert q_values.ndim == 1
+        nb_actions = q_values.shape[0]
+
+        exploit = False
+        if np.random.uniform() < self.baseline - action:
+            action = np.random.randint(0, nb_actions)
+        else:
+            exploit = True
+            action = np.argmax(q_values)
+        return action, exploit
+
+    def get_config(self):
+        """Return configurations of EpsGreedyQPolicy
+
+        # Returns
+            Dict of config
+        """
+        config = super(DynamicExpForBDQL, self).get_config()
+        config['baseline'] = self.baseline
+        return config
 
 class EpsGreedyFuzzyPolicy(Policy):
     """Implement the epsilon greedy policy
