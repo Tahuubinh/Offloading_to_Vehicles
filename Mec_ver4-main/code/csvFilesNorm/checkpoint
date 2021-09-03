@@ -1,2 +1,2 @@
-model_checkpoint_path: "weight_DQL_M900_1000_mem25_2.h5f"
-all_model_checkpoint_paths: "weight_DQL_M900_1000_mem25_2.h5f"
+model_checkpoint_path: "weight_Sarsa_M900_1000.h5f"
+all_model_checkpoint_paths: "weight_Sarsa_M900_1000.h5f"

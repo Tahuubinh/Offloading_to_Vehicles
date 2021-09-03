@@ -32,6 +32,7 @@ from fuzzy_controller import *
 import os
 
 from dqnMEC import DQNAgent, BDQNAgent
+from SarsaMEC import SARSAAgent
 
 os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 def Run_Random():
@@ -231,6 +232,31 @@ def Run_DDQL(i, file):
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
     dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    
+def Run_Sarsa(i, file):
+    model=build_model(14,4)
+    num_actions = 4
+    policy = EpsGreedyQPolicy(0.1)
+    env = BusEnv("Sarsa")
+    env.modifyEnv(i, file)
+    env.seed(123)
+    
+    try:
+        dqn = SARSAAgent(model=model, nb_actions=num_actions, nb_steps_warmup=10,
+                     policy=policy,gamma=0.8)
+    except Exception as e:
+        print(e)
+    files = open("testSarsa.csv","w")
+    files.write("kq\n")
+    #create callback
+    callbacks = CustomerTrainEpisodeLogger("./"+ str(file) +"/Sarsa_5phut_"+ str(i) +".csv")
+    callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_Sarsa_"+ str(i) +".h5f",interval=50000)
+    callback3 = TestLogger11(files)
+    dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
+    try:
+        dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    except Exception as e:
+        print(e)
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
@@ -276,6 +302,7 @@ if __name__=="__main__":
             #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
             #Run_FDQO("M900_1000_0.9_exp0.2", file)
-            Run_RGreedy("M900_1000", file)
+            #Run_RGreedy("M900_1000", file)
+            Run_Sarsa("M900_1000", file)
         except:
             continue

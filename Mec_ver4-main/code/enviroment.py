@@ -27,7 +27,7 @@ class BusEnv(gym.Env):
         data902 = data902[:, 13:15]
         self.data_bus = {"900":data900, "901":data901, "902":data902}
         #streaming data of task
-        if env != "DQL" and env != "FDQO" and env != "DDQL" and env != "BDQL": 
+        if env != "DQL" and env != "FDQO" and env != "DDQL" and env != "BDQL" and env != "Sarsa": 
             self.index_of_episode = 0
             self.data = pd.read_csv(os.path.join(DATA_TASK, "datatask{}.csv".format(self.index_of_episode)),header=None).to_numpy()
             self.data = np.sort(self.data, axis=0)
@@ -100,6 +100,12 @@ class BusEnv(gym.Env):
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_ddql.csv"),"w")
             self.node_computing = open("chiatask_ddql.csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
+        elif env == "Sarsa":
+            self.rewardfiles = open("Sarsa_5phut_env.csv","w")
+            self.quality_result_file = open("n_quality_tasks_Sarsa.csv","w")
+            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_Sarsa.csv"),"w")
+            self.node_computing = open("chiatask_Sarsa.csv","w")
+            self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         self.sumreward = 0
         self.nreward = 0
         self.configuration_result_file.write("server,bus1,bus2,bus3\n")
@@ -149,6 +155,12 @@ class BusEnv(gym.Env):
             self.quality_result_file = open("./"+ str(file) +"/n_quality_tasks_ddql_"+ str(i) +".csv","w")
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_ddql_"+ str(i) +".csv"),"w")
             self.node_computing = open("./"+ str(file) +"/chiatask_ddql_"+ str(i) +".csv","w")
+            self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
+        elif self.env == "Sarsa":
+            self.rewardfiles = open("./"+ str(file) +"/Sarsa_5phut_env_"+ str(i) +".csv","w")
+            self.quality_result_file = open("./"+ str(file) +"/n_quality_tasks_Sarsa_"+ str(i) +".csv","w")
+            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_Sarsa_"+ str(i) +".csv"),"w")
+            self.node_computing = open("./"+ str(file) +"/chiatask_Sarsa_"+ str(i) +".csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
 
     def readexcel(self, number_bus, time):
