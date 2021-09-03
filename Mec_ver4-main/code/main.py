@@ -97,6 +97,49 @@ def Run_Fuzzy():
     stop = timeit.default_timer()
     print('Time: ', stop - start)  
     files.close()
+    
+def Run_RGreedy(i, file):
+    sumreward = 0
+    nreward = 0
+    files = open("RGreedy_5phut.csv","w")
+    files1 = open("testRGreedy.csv","w")
+
+    files.write("kq,sl,mean_reward\n")
+    env = BusEnv("RGreedy")
+    env.modifyEnv(i, file)
+    for i in range(100):
+        tong=0
+        h=0
+        soluong=0
+
+        a=env.observation
+        c=False
+        while c==False:
+            #Rmi=(10*np.log2(1+46/(np.power(a[(1-1)*3],4)*100)))/8
+            #m1=a[11]/a[2+(1-1)*3]+max(a[12]/(Rmi),a[1+(1-1)*3])
+            # Rmi=(10*np.log2(1+46/(np.power(a[(2-1)*3],4)*100)))/8
+            # m2=a[11]/a[2+(2-1)*3]+max(a[12]/(Rmi),a[1+(2-1)*3])
+            # Rmi=(10*np.log2(1+46/(np.power(a[(3-1)*3],4)*100)))/8
+            # m3=a[11]/a[2+(3-1)*3]+max(a[12]/(Rmi),a[1+(3-1)*3])
+            # m0=a[9]+a[11]/a[10]
+            #action=np.argmin([m0,m1,m2,m3])
+
+            predict_reward = env.predict_reward()
+            action = int(max(predict_reward, key=predict_reward.get))
+            a,b,c,d=env.step(action)
+            tong+=b
+            sumreward = sumreward +b
+            nreward = nreward + 1
+            soluong+=1
+            files1.write(str(sumreward / nreward)+"\n")
+            if c==True :
+                if i!=99:
+                    env.reset()
+                files.write(str(tong)+","+str(soluong)+","+str(tong/soluong)+"\n")
+                print(tong)
+    stop = timeit.default_timer()
+    #print('Time: ', stop - start)  
+    files.close()
 
 #using for DQL
 def build_model(state_size, num_actions):
@@ -229,10 +272,10 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            #Run_DQL("test", file)
+            #Run_DQL("M900_1000_mem25_2", file)
             #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
             #Run_FDQO("M900_1000_0.9_exp0.2", file)
-            Run_Random()
+            Run_RGreedy("M900_1000", file)
         except:
             continue

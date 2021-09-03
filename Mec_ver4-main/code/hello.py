@@ -47,14 +47,21 @@ from queue import Queue
 # plt.axis([0, 20, 0, 3000])
 # plt.show()
 
-a = Queue(2)
-a.put(1)
-a.put(2)
-b=5
-print(b)
-b = b - a.get()
-print(b)
-print(a.get())
+# a = Queue(2)
+# a.put(1)
+# a.put(2)
+# b=5
+# print(b)
+# b = b - a.get()
+# print(b)
+# print(a.get())
+
+a_dictionary = {"a": 1, "b": 5, "c": 3}
+
+max_key = max(a_dictionary, key=a_dictionary.get)
+
+
+print(max_key)
 
 
 

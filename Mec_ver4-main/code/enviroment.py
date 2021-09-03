@@ -70,11 +70,11 @@ class BusEnv(gym.Env):
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_ucb.csv"),"w")
             self.node_computing = open("chiatask_ucb.csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
-        elif env == "Fuzzy":
-            self.rewardfiles = open("Fuzzy_5phut_env.csv","w")
-            self.quality_result_file = open("n_quality_tasks_fuzzy.csv","w")
-            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_fuzzy.csv"),"w")
-            self.node_computing = open("chiatask_fuzzy.csv","w")
+        elif env == "RGreedy":
+            self.rewardfiles = open("RGreedy_5phut_env.csv","w")
+            self.quality_result_file = open("n_quality_tasks_RGreedy.csv","w")
+            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_RGreedy.csv"),"w")
+            self.node_computing = open("chiatask_RGreedy.csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         elif env == "FDQO":
             self.rewardfiles = open("FDQO_5phut_env.csv","w")
@@ -120,11 +120,11 @@ class BusEnv(gym.Env):
             self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_ucb.csv"),"w")
             self.node_computing = open("chiatask_ucb.csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
-        elif self.env == "Fuzzy":
-            self.rewardfiles = open("Fuzzy_5phut_env.csv","w")
-            self.quality_result_file = open("n_quality_tasks_fuzzy.csv","w")
-            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_fuzzy.csv"),"w")
-            self.node_computing = open("chiatask_fuzzy.csv","w")
+        elif self.env == "RGreedy":
+            self.rewardfiles = open("./"+ str(file) +"/RGreedy_5phut_env_"+ str(i) +".csv","w")
+            self.quality_result_file = open("./"+ str(file) +"/n_quality_tasks_RGreedy_"+ str(i) +".csv","w")
+            self.configuration_result_file = open(os.path.join(RESULT_DIR, "thongso_RGreedy_"+ str(i) +".csv"),"w")
+            self.node_computing = open("./"+ str(file) +"/chiatask_RGreedy_"+ str(i) +".csv","w")
             self.node_computing.write("somay,distance,may0,may1,may2,may3,reward\n")
         elif self.env == "FDQO":
             self.rewardfiles = open("./"+ str(file) +"/FDQO_5phut_env_"+ str(i) +".csv","w")
@@ -245,6 +245,26 @@ class BusEnv(gym.Env):
         avg_reward = self.sumreward/self.nreward
         self.rewardfiles.write(str(avg_reward)+"\n")
         return self.observation, reward, done,{"number": self.number, "guesses": self.guess_count}
+    
+    def predict_reward(self):
+        time_delay = 0
+        reward = dict()
+        
+        #logic block when computing node is bus node
+        for action in range(1, 4):
+            Rate_trans_req_data = (10*np.log2(1+46/(np.power(self.observation[(action-1)*3],4)*100))) / 8
+
+            distance_response = self.readexcel(900+action-1,self.observation[1+(action-1)*3]+self.time)
+            Rate_trans_res_data = (10*np.log2(1+46/(np.power(distance_response,4)*100)))/8
+            time_delay = self.observation[1+(action-1)*3]+self.queue[0][3]/(Rate_trans_res_data*1000)
+            reward[str(action)] = max(0,min((2*self.observation[13]-time_delay)/self.observation[13],1))
+        
+        #logic block when computing node is server
+        action = 0
+
+        time_delay = self.observation[9]
+        reward[str(action)] = max(0,min((2*self.observation[13]-time_delay)/self.observation[13],1))
+        return reward
     
     def get_average_reward(self):
         avg_reward = 0

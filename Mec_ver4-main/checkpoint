@@ -1,2 +1,0 @@
-model_checkpoint_path: "weight_DQL.h5f"
-all_model_checkpoint_paths: "weight_DQL.h5f"
