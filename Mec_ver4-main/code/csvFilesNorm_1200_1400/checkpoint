@@ -1,2 +1,0 @@
-model_checkpoint_path: "weight_FDQO_M1200_1400_0.8_fuzzy0.98.h5f"
-all_model_checkpoint_paths: "weight_FDQO_M1200_1400_0.8_fuzzy0.98.h5f"

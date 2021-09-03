@@ -138,17 +138,24 @@ def Run_DQL(i, file):
 def Run_BDQL(i, file):
     model=build_model(14,4)
     num_actions = 4
-    baseline = 0.6
-    policy = EpsGreedyQPolicy(0.1)
-    policy2 = EpsGreedyQPolicy(0.05)
+    # using static by setting policy2 to None
+    # for dynamic, epsilon = min(epsilon, epsilon - k(average_reward - baseline))
+    # epsilon = max(epsilon, 0.01)
+    baseline = 0.5      
+    k = 0.3
+    epsilon = 0.1
+    policy = EpsGreedyQPolicy(epsilon)
+    policy2 = None      # None if not used, mean: using dynamic insted
+    reward_capacity = 10000      # Queue that save the last "reward_capacity" rewards
     env = BusEnv("BDQL")
     env.modifyEnv(i, file)
     env.seed(123)
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = BDQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, policy2=policy2, gamma=0.8,
-              memory_interval=1, i = i, file = file)
+              target_model_update=1e-3, policy=policy, gamma=0.8,
+              memory_interval=1, i = i, file = file, reward_capacity = reward_capacity,
+              k = k, epsilon = epsilon)
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
@@ -184,7 +191,7 @@ def Run_DDQL(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    model = FDQO_method.build_model(epsilon = 0.05, name = i, file = file)
+    model = FDQO_method.build_model(epsilon = 0.2, name = i, file = file)
     #Create enviroment FDQO
     env = BusEnv("FDQO")
     env.modifyEnv(i, file)
@@ -205,7 +212,7 @@ def Run_FDQO(i, file):
     files.close()
 
 if __name__=="__main__":
-    file = "csvFilesNorm"
+    file = "csvFilesNorm" # Location to save all the results
     # types = "DQL"
     # if len(sys.argv) > 1:
     #     types = sys.argv[1]
@@ -222,9 +229,10 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            #Run_DQL("M900_1000_memory25000", file)
-            Run_BDQL("M900_1000_0.1_0.05_b0.6_fix_2", file)
+            #Run_DQL("test", file)
+            #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
-            #Run_FDQO("M900_1000_0.9_exp0.05", file)
+            #Run_FDQO("M900_1000_0.9_exp0.2", file)
+            Run_Random()
         except:
             continue

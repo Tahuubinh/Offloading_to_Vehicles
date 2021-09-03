@@ -9,6 +9,7 @@ from coreMEC import Agent
 from rl.policy import EpsGreedyQPolicy, GreedyQPolicy
 from policy import DynamicExpForBDQL
 from rl.util import *
+from queue import Queue
 
 
 def mean_q(y_true, y_pred):
@@ -143,8 +144,6 @@ class DQNAgent(AbstractDQNAgent):
         self.model = model
         if policy is None:
             policy = EpsGreedyQPolicy()
-        if policy2 is None:
-            policy2 = EpsGreedyQPolicy(0)
         if test_policy is None:
             test_policy = GreedyQPolicy()
         self.policy = policy
@@ -253,7 +252,7 @@ class DQNAgent(AbstractDQNAgent):
         reward = max(0,min((2*observation[13]-time_delay)/observation[13],1))
         return reward
 
-    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0):
+    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0, r=0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
@@ -800,22 +799,53 @@ class NAFAgent(AbstractDQNAgent):
 # Aliases
 ContinuousDQNAgent = NAFAgent
 class BDQNAgent(DQNAgent):
-    def __init__(self, i, file, *args, **kwargs):
+    def __init__(self, i, file, reward_capacity = 0, k=0.1, epsilon = 0.1, *args, **kwargs):
         super(BDQNAgent, self).__init__(*args, **kwargs)
         self.files = open("./"+ str(file) +"/kqBDQN_"+ str(i) +".csv","w")
-        # self.average_reward = 0
-        # self.t = 0
-        # self.sumreward = 0
-    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0, avg_reward = 0):
+        self.average_reward = 0
+        self.t = 0
+        self.sumreward = 0
+        self.reward_capacity = reward_capacity
+        self.reward_queue = Queue(maxsize = reward_capacity)
+        self.epsilon = epsilon
+        self.k = k
+    def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0, r = 0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
+        if self.reward_capacity == 0:
+            self.sumreward += r
+            try:
+                self.average_reward = self.sumreward / self.t
+            except:
+                pass
+            self.t += 1
+        else:
+            #print(self.sumreward, self.reward_queue.qsize(), self.t)
+            if self.reward_queue.full():
+                self.sumreward -= self.reward_queue.get()
+            self.reward_queue.put(r)
+            self.sumreward += r
+            try:
+                self.average_reward = self.sumreward / self.t
+            except:
+                pass
+            if (self.t < self.reward_capacity):
+                self.t += 1
         if self.training:
-            action, ext = self.policy.select_action(q_values=q_values, step = step)
-            if avg_reward > baseline:
-                action, ext = self.policy2.select_action(q_values=q_values, step = step)
-                # Using for dynamic exploration
-                #action, ext = self.policy2.select_action(q_values=q_values, action=action)
+            if (self.policy2 == None):
+                epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
+                epsilon = max(epsilon, 0.01)
+                if np.random.uniform() < epsilon:
+                    action = np.random.randint(0, 4)
+                    ext = False
+                else:
+                    ext = True
+                    action = np.argmax(q_values)
+            else: 
+                action, ext = self.policy.select_action(q_values=q_values, step = step)
+                if self.average_reward > baseline:
+                    action, ext = self.policy2.select_action(q_values=q_values, step = step)
             #     if ext:
             #         self.files.write("0\n")
             #     else:
@@ -831,9 +861,7 @@ class BDQNAgent(DQNAgent):
         
         #new_reward = self.estimate_reward(action,observation, delays)
         #self.average_reward = (self.t * self.average_reward + new_reward)/(self.t + 1)
-        # self.sumreward += new_reward
-        # self.t += 1
-        # self.average_reward = self.sumreward / self.t
+        
         # if self.t % 10000 == 0:
         #     print(self.t, self.average_reward)
         # print(self.t, self.sumreward, new_reward, action)

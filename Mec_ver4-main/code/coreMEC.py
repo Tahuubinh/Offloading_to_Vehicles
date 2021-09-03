@@ -127,6 +127,7 @@ class Agent(object):
         # end other initiations
         
         try:
+            r = 0
             while self.step < nb_steps:
                 if observation is None:  # start of a new episode
                     callbacks.on_episode_begin(episode)
@@ -174,7 +175,7 @@ class Agent(object):
                 # (forward step) and then use the reward to improve (backward step).
                 # delays = env.dict_of_vehicular_delay()
                 avg_reward = env.get_average_reward()
-                action = self.forward(observation, self.step, baseline, eps, avg_reward)
+                action = self.forward(observation, self.step, baseline, eps, r)
                 if self.processor is not None:
                     action = self.processor.process_action(action)
                 reward = np.float32(0)
@@ -220,7 +221,7 @@ class Agent(object):
                     # resetting the environment. We need to pass in `terminal=False` here since
                     # the *next* state, that is the state of the newly reset environment, is
                     # always non-terminal by convention.
-                    self.forward(observation, self.step, baseline, eps, avg_reward)
+                    self.forward(observation, self.step, baseline, eps, r)
                     self.backward(0., terminal=False)
 
                     # This episode is finished, report and reset.
@@ -235,11 +236,16 @@ class Agent(object):
                     observation = None
                     episode_step = None
                     episode_reward = None
-        except KeyboardInterrupt:
+        # except KeyboardInterrupt:
+        #     # We catch keyboard interrupts here so that training can be be safely aborted.
+        #     # This is so common that we've built this right into this function, which ensures that
+        #     # the `on_train_end` method is properly called.
+        #     did_abort = True
+        except Exception as e:
             # We catch keyboard interrupts here so that training can be be safely aborted.
             # This is so common that we've built this right into this function, which ensures that
             # the `on_train_end` method is properly called.
-            did_abort = True
+            print(e)
         callbacks.on_train_end(logs={'did_abort': did_abort})
         self._on_train_end()
 

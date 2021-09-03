@@ -244,7 +244,7 @@ class DQNAgent(AbstractDQNAgent):
         #self.n_tasks_in_node[action] = self.n_tasks_in_node[action]+1
         reward = max(0,min((2*observation[13]-time_delay)/observation[13],1))
         return reward
-    def forward(self, observation, step = 0, baseline = 0.8, eps = 0.9):
+    def forward(self, observation, step = 0, baseline = 0.8, eps = 0.9, r = 0):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)

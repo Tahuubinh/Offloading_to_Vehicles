@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from math import exp, factorial
+from queue import Queue
 
 # # Generate Distribution:
 # randomNums = np.random.normal(6, 2, size=1000)
@@ -36,16 +37,24 @@ from math import exp, factorial
 # number_tasks = pd.read_csv("../data_task/summary.csv")
 # print(number_tasks)
 
-a = np.ones(200)
-landa = 4
-for i in range(200):
-    j = i % 9
-    a[i] = exp(-landa) * (landa**j) / factorial(j)*10000
-b = np.arange(200)
-plt.scatter(b, a)
-plt.axis([0, 20, 0, 3000])
-plt.show()
+# a = np.ones(200)
+# landa = 4
+# for i in range(200):
+#     j = i % 9
+#     a[i] = exp(-landa) * (landa**j) / factorial(j)*10000
+# b = np.arange(200)
+# plt.scatter(b, a)
+# plt.axis([0, 20, 0, 3000])
+# plt.show()
 
+a = Queue(2)
+a.put(1)
+a.put(2)
+b=5
+print(b)
+b = b - a.get()
+print(b)
+print(a.get())
 
 
 

@@ -243,7 +243,7 @@ class BusEnv(gym.Env):
         self.sumreward = self.sumreward + reward
         self.nreward = self.nreward + 1
         avg_reward = self.sumreward/self.nreward
-        self.rewardfiles.write(str(avg_reward)+" "+str(reward)+" "+str(action)+"\n")
+        self.rewardfiles.write(str(avg_reward)+"\n")
         return self.observation, reward, done,{"number": self.number, "guesses": self.guess_count}
     
     def get_average_reward(self):

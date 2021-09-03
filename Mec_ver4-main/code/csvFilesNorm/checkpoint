@@ -1,2 +1,2 @@
-model_checkpoint_path: "weight_BDQL_M900_1000_0.1_0.05_b0.6_fix_2.h5f"
-all_model_checkpoint_paths: "weight_BDQL_M900_1000_0.1_0.05_b0.6_fix_2.h5f"
+model_checkpoint_path: "weight_BDQL_M900_1000_dyn_e0.1_k0.3_que10k_b0.5.h5f"
+all_model_checkpoint_paths: "weight_BDQL_M900_1000_dyn_e0.1_k0.3_que10k_b0.5.h5f"
