@@ -260,7 +260,10 @@ def Run_Sarsa(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    model = FDQO_method.build_model(epsilon = 0.2, name = i, file = file)
+    baseline = 0.5  # None if using FDQO, >0 and <1 if using baseline
+    k = 0.2     # Same formula as BDQL
+    epsilon = 0.1
+    model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file, k = k)
     #Create enviroment FDQO
     env = BusEnv("FDQO")
     env.modifyEnv(i, file)
@@ -276,7 +279,7 @@ def Run_FDQO(i, file):
     callback3 = TestLogger11(files)
     model.compile(Adam(learning_rate=1e-3), metrics=['mae'])
     model.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
-              baseline = 0.9, eps = 1)
+              baseline = baseline, eps = 1)
     #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
@@ -301,8 +304,8 @@ if __name__=="__main__":
             #Run_DQL("M900_1000_mem25_2", file)
             #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
-            #Run_FDQO("M900_1000_0.9_exp0.2", file)
+            Run_FDQO("M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5", file)
             #Run_RGreedy("M900_1000", file)
-            Run_Sarsa("M900_1000", file)
+            #Run_Sarsa("M900_1000", file)
         except:
             continue

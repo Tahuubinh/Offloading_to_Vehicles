@@ -11,6 +11,7 @@ from policy import EpsGreedyQPolicy
 from rl.util import *
 
 from fuzzy_controller import *
+from queue import Queue
 
 def mean_q(y_true, y_pred):
     return K.mean(K.max(y_pred, axis=-1))
@@ -98,7 +99,7 @@ class DQNAgent(AbstractDQNAgent):
             `naive`: Q(s,a;theta) = V(s;theta) + A(s,a;theta)
     """
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
-                 dueling_type='avg', i = None, file = None, *args, **kwargs):
+                 dueling_type='avg', i = None, file = None, k = 0, epsilon = 0.1, *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
 
         # Validate (important) input.
@@ -113,6 +114,13 @@ class DQNAgent(AbstractDQNAgent):
         self.enable_double_dqn = enable_double_dqn
         self.enable_dueling_network = enable_dueling_network
         self.dueling_type = dueling_type
+        self.average_reward = 0
+        self.t = 0
+        self.sumreward = 0
+        self.reward_capacity = 5000
+        self.reward_queue = Queue(maxsize = self.reward_capacity)
+        self.epsilon = epsilon
+        self.k = k
         if self.enable_dueling_network:
             # get the second last layer of the model, abandon the last layer
             layer = model.layers[-2]
@@ -248,17 +256,32 @@ class DQNAgent(AbstractDQNAgent):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
-        if self.training:
-            action, _ = self.policy.select_action(q_values=q_values)
+        if baseline:
+            # average of max #reward_capacity nearest rewards
+            if self.reward_queue.full():
+                self.sumreward -= self.reward_queue.get()
+            self.reward_queue.put(r)
+            self.sumreward += r
+            try:
+                self.average_reward = self.sumreward / self.t #using when t > 0
+            except:
+                pass
+            if (self.t < self.reward_capacity):
+                self.t += 1
+            epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
+            epsilon = max(epsilon, 0.01)
+            if np.random.uniform() < epsilon:
+                action = np.random.randint(0, 4)
+            else:
+                action = np.argmax(q_values)
         
-            if self.estimate_reward(action,observation) > baseline or np.random.uniform() > eps:
+            if self.average_reward > baseline:
                 action = action
                 self.files.write("0\n")
                 #print("A")
             else:
                 action = self.fuzzy_logic.choose_action(observation)
                 self.files.write("1\n")
-            
             # if exploration == False:
             #     if self.estimate_reward(action,observation)>=0.8:
             #         action = action
@@ -274,7 +297,15 @@ class DQNAgent(AbstractDQNAgent):
             #         action = self.fuzzy_logic.choose_action(observation)
             #         self.files.write("1\n")
         else:
-            action = self.test_policy.select_action(q_values=q_values)
+            action, _ = self.policy.select_action(q_values=q_values)
+        
+            if self.estimate_reward(action,observation) > baseline or np.random.uniform() > eps:
+                action = action
+                self.files.write("0\n")
+                #print("A")
+            else:
+                action = self.fuzzy_logic.choose_action(observation)
+                self.files.write("1\n")
 
         # Book-keeping.
         self.recent_observation = observation
