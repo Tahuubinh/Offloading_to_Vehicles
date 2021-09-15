@@ -304,7 +304,7 @@ if __name__=="__main__":
             #Run_DQL("M900_1000_mem25_2", file)
             #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
-            Run_FDQO("M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5", file)
+            Run_FDQO("M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5_c0.9", file)
             #Run_RGreedy("M900_1000", file)
             #Run_Sarsa("M900_1000", file)
         except:

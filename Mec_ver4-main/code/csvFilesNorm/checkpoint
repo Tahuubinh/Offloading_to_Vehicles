@@ -1,2 +1,2 @@
-model_checkpoint_path: "weight_FDQO_M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5.h5f"
-all_model_checkpoint_paths: "weight_FDQO_M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5.h5f"
+model_checkpoint_path: "weight_FDQO_M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5_c0.9.h5f"
+all_model_checkpoint_paths: "weight_FDQO_M900_1000_baseline_0.5_dyn_e0.1_k0.2_que5k_b0.5_c0.9.h5f"

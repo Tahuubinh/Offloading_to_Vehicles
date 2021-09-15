@@ -268,20 +268,26 @@ class DQNAgent(AbstractDQNAgent):
                 pass
             if (self.t < self.reward_capacity):
                 self.t += 1
-            epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
-            epsilon = max(epsilon, 0.01)
-            if np.random.uniform() < epsilon:
-                action = np.random.randint(0, 4)
-            else:
-                action = np.argmax(q_values)
         
             if self.average_reward > baseline:
-                action = action
+                epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
+                epsilon = max(epsilon, 0.01)
+                if np.random.uniform() < epsilon:
+                    action = np.random.randint(0, 4)
+                else:
+                    action = np.argmax(q_values)
                 self.files.write("0\n")
                 #print("A")
             else:
-                action = self.fuzzy_logic.choose_action(observation)
-                self.files.write("1\n")
+                action, _ = self.policy.select_action(q_values=q_values)
+        
+                if self.estimate_reward(action,observation) > 0.9:
+                    action = action
+                    self.files.write("0\n")
+                    #print("A")
+                else:
+                    action = self.fuzzy_logic.choose_action(observation)
+                    self.files.write("1\n")
             # if exploration == False:
             #     if self.estimate_reward(action,observation)>=0.8:
             #         action = action
