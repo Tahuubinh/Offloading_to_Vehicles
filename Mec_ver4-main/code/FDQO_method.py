@@ -117,7 +117,7 @@ class DQNAgent(AbstractDQNAgent):
         self.average_reward = 0
         self.t = 0
         self.sumreward = 0
-        self.reward_capacity = 5000
+        self.reward_capacity = 3000
         self.reward_queue = Queue(maxsize = self.reward_capacity)
         self.epsilon = epsilon
         self.k = k
