@@ -260,10 +260,12 @@ def Run_Sarsa(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    baseline = 0.5  # None if using FDQO, >0 and <1 if using baseline
+    baseline = 0  # None if using FDQO, >0 and <1 if using baseline
+    threshold = 0.9     # if reward received bigger than threshold, using Fuzzy Logic
     k = 0.3     # Same formula as BDQL
     epsilon = 0.1
-    model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file, k = k)
+    model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file,
+                                    k = k, threshold = threshold)
     #Create enviroment FDQO
     env = BusEnv("FDQO")
     env.modifyEnv(i, file)
@@ -304,7 +306,7 @@ if __name__=="__main__":
             #Run_DQL("M900_1000_mem25_2", file)
             #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
             #Run_DDQL("M900_1000_mem25_2", file)
-            Run_FDQO("M900_1000_baseline_0.5_dyn_e0.1_k0.3_que3k_b0.5_c0.9", file)
+            Run_FDQO("M900_1000_test", file)
             #Run_RGreedy("M900_1000", file)
             #Run_Sarsa("M900_1000", file)
         except:

@@ -99,7 +99,8 @@ class DQNAgent(AbstractDQNAgent):
             `naive`: Q(s,a;theta) = V(s;theta) + A(s,a;theta)
     """
     def __init__(self, model, policy=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
-                 dueling_type='avg', i = None, file = None, k = 0, epsilon = 0.1, *args, **kwargs):
+                 dueling_type='avg', i = None, file = None, k = 0, epsilon = 0.1,
+                 threshold = 0.8, *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
 
         # Validate (important) input.
@@ -121,6 +122,7 @@ class DQNAgent(AbstractDQNAgent):
         self.reward_queue = Queue(maxsize = self.reward_capacity)
         self.epsilon = epsilon
         self.k = k
+        self.threshold = threshold
         if self.enable_dueling_network:
             # get the second last layer of the model, abandon the last layer
             layer = model.layers[-2]
@@ -281,7 +283,7 @@ class DQNAgent(AbstractDQNAgent):
             else:
                 action, _ = self.policy.select_action(q_values=q_values)
         
-                if self.estimate_reward(action,observation) > 0.9:
+                if self.estimate_reward(action,observation) > self.threshold:
                     action = action
                     self.files.write("0\n")
                     #print("A")
@@ -304,8 +306,7 @@ class DQNAgent(AbstractDQNAgent):
             #         self.files.write("1\n")
         else:
             action, _ = self.policy.select_action(q_values=q_values)
-        
-            if self.estimate_reward(action,observation) > baseline or np.random.uniform() > eps:
+            if self.estimate_reward(action,observation) > self.threshold or np.random.uniform() > eps:
                 action = action
                 self.files.write("0\n")
                 #print("A")
