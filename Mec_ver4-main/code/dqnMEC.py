@@ -102,7 +102,7 @@ class DQNAgent(AbstractDQNAgent):
             `max`: Q(s,a;theta) = V(s;theta) + (A(s,a;theta)-max_a(A(s,a;theta)))
             `naive`: Q(s,a;theta) = V(s;theta) + A(s,a;theta)
     """
-    def __init__(self, model, policy=None, policy2=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
+    def __init__(self, model, i_name, file, policy=None, policy2=None, test_policy=None, enable_double_dqn=False, enable_dueling_network=False,
                  dueling_type='avg', *args, **kwargs):
         super(DQNAgent, self).__init__(*args, **kwargs)
 
@@ -114,6 +114,12 @@ class DQNAgent(AbstractDQNAgent):
         self.enable_double_dqn = enable_double_dqn
         self.enable_dueling_network = enable_dueling_network
         self.dueling_type = dueling_type
+        self.i_name = i_name
+        self.file = file
+        if self.enable_double_dqn:
+            self.files = open("./"+ str(self.file) +"/kqDDQN_"+ str(self.i_name) +".csv","w")
+        else:
+            self.files = open("./"+ str(self.file) +"/kqDQN_"+ str(self.i_name) +".csv","w")
         if self.enable_dueling_network:
             # get the second last layer of the model, abandon the last layer
             layer = model.layers[-2]
@@ -272,7 +278,10 @@ class DQNAgent(AbstractDQNAgent):
             #     pass
         else:
             action = self.test_policy.select_action(q_values=q_values, step = step)
-
+        if exploit:
+            self.files.write("0\n")
+        else:
+            self.files.write("1\n")
         # Book-keeping.
         self.recent_observation = observation
         self.recent_action = action
@@ -799,9 +808,9 @@ class NAFAgent(AbstractDQNAgent):
 # Aliases
 ContinuousDQNAgent = NAFAgent
 class BDQNAgent(DQNAgent):
-    def __init__(self, i, file, reward_capacity = 0, k=0.1, epsilon = 0.1, *args, **kwargs):
+    def __init__(self, reward_capacity = 0, k=0.1, epsilon = 0.1, *args, **kwargs):
         super(BDQNAgent, self).__init__(*args, **kwargs)
-        self.files = open("./"+ str(file) +"/kqBDQN_"+ str(i) +".csv","w")
+        self.files = open("./"+ str(self.file) +"/kqBDQN_"+ str(self.i_name) +".csv","w")
         self.average_reward = 0
         self.t = 0
         self.sumreward = 0

@@ -168,7 +168,8 @@ def Run_DQL(i, file):
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=1)
+              target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=1,
+              i_name = i, file = file)
     files = open("testDQL.csv","w")
     files.write("kq\n")
     #create callback
@@ -198,7 +199,7 @@ def Run_BDQL(i, file):
     
     dqn = BDQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
               target_model_update=1e-3, policy=policy, gamma=0.8,
-              memory_interval=1, i = i, file = file, reward_capacity = reward_capacity,
+              memory_interval=1, i_name = i, file = file, reward_capacity = reward_capacity,
               k = k, epsilon = epsilon)
     files = open("testDQL.csv","w")
     files.write("kq\n")
@@ -222,7 +223,7 @@ def Run_DDQL(i, file):
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
               target_model_update=1e-3, policy=policy,gamma=0.8,memory_interval=1,
-              enable_double_dqn=True)
+              enable_double_dqn=True, i_name = i, file = file)
     files = open("testDDQL.csv","w")
     files.write("kq\n")
     #create callback
@@ -260,9 +261,9 @@ def Run_Sarsa(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    baseline = 0  # None if using FDQO, >0 and <1 if using baseline
-    threshold = 0.9     # if reward received bigger than threshold, using Fuzzy Logic
-    k = 0.3     # Same formula as BDQL
+    baseline = None  # None if using FDQO, >0 and <1 if using baseline
+    threshold = 0.85     # if reward received bigger than threshold, using Fuzzy Logic
+    k = 0.4     # Same formula as BDQL
     epsilon = 0.1
     model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file,
                                     k = k, threshold = threshold)
@@ -271,7 +272,7 @@ def Run_FDQO(i, file):
     env.modifyEnv(i, file)
     env.seed(123)
     #create memory
-    memory = SequentialMemory(limit=5000, window_length=1)
+    memory = SequentialMemory(limit=25000, window_length=1)
     #open files
     files = open("testFDQO.csv","w")
     files.write("kq\n")
@@ -303,10 +304,10 @@ if __name__=="__main__":
     #create model FDQO
     for i in range(0,1):
         try:
-            #Run_DQL("M900_1000_mem25_2", file)
-            #Run_BDQL("M900_1000_dyn_e0.1_k0.3_que10k_b0.5", file)
-            #Run_DDQL("M900_1000_mem25_2", file)
-            Run_FDQO("M900_1000_test", file)
+            #Run_DQL("M900_1000_mem25_4", file)
+            #Run_BDQL("M900_1000_test", file)
+            Run_DDQL("M900_1000_mem25_3", file)
+            #Run_FDQO("M900_1000_0.85", file)
             #Run_RGreedy("M900_1000", file)
             #Run_Sarsa("M900_1000", file)
         except:
