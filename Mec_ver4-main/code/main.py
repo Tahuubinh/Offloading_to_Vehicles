@@ -237,7 +237,8 @@ def Run_DDQL(i, file):
 def Run_Sarsa(i, file):
     model=build_model(14,4)
     num_actions = 4
-    policy = EpsGreedyQPolicy(0.1)
+    # policy has been changed to also return "exploit", be care
+    policy = EpsGreedyQPolicy(0.1) 
     env = BusEnv("Sarsa")
     env.modifyEnv(i, file)
     env.seed(123)
@@ -306,9 +307,9 @@ if __name__=="__main__":
         try:
             #Run_DQL("M900_1000_mem25_4", file)
             #Run_BDQL("M900_1000_test", file)
-            Run_DDQL("M900_1000_mem25_3", file)
+            #Run_DDQL("M900_1000_mem25_3", file)
             #Run_FDQO("M900_1000_0.85", file)
             #Run_RGreedy("M900_1000", file)
-            #Run_Sarsa("M900_1000", file)
+            Run_Sarsa("M900_1000", file)
         except:
             continue

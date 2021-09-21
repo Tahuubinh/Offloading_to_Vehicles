@@ -19,7 +19,7 @@ class SARSAAgent(Agent):
     """
     def __init__(self, model, nb_actions, policy=None, test_policy=None, gamma=.99, nb_steps_warmup=10,
                  train_interval=1, delta_clip=np.inf, *args, **kwargs):
-        super(SARSAAgent, self).__init__(*args, **kwargs)
+        super(SarsaAgent, self).__init__(*args, **kwargs)
 
         # Do not use defaults in constructor because that would mean that each instance shares the same
         # policy.
@@ -60,7 +60,7 @@ class SARSAAgent(Agent):
         return self.processor.process_state_batch(batch)
 
     def get_config(self):
-        config = super(SARSAAgent, self).get_config()
+        config = super(SarsaAgent, self).get_config()
         config['nb_actions'] = self.nb_actions
         config['gamma'] = self.gamma
         config['nb_steps_warmup'] = self.nb_steps_warmup
@@ -228,3 +228,6 @@ class SARSAAgent(Agent):
     def test_policy(self, policy):
         self.__test_policy = policy
         self.__test_policy._set_agent(self)
+
+# Aliases
+SarsaAgent = SARSAAgent

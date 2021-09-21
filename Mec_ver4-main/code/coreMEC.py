@@ -415,7 +415,7 @@ class Agent(object):
         """
         pass
 
-    def forward(self, observation):
+    def forward(self, observation, step, baseline, eps, r):
         """Takes the an observation from the environment and returns the action to be taken next.
         If the policy is implemented by a neural network, this corresponds to a forward (inference) pass.
 
