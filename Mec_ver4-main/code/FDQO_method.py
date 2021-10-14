@@ -123,6 +123,10 @@ class DQNAgent(AbstractDQNAgent):
         self.epsilon = epsilon
         self.k = k
         self.threshold = threshold
+        self.reward_queue2 = Queue(maxsize = 10000)
+        self.sumreward2 = 0
+        self.average_reward2 = 0
+        self.t2 = 0
         if self.enable_dueling_network:
             # get the second last layer of the model, abandon the last layer
             layer = model.layers[-2]
@@ -272,7 +276,17 @@ class DQNAgent(AbstractDQNAgent):
                 self.t += 1
         
             if self.average_reward > baseline:
-                epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
+                if self.reward_queue2.full():
+                    self.sumreward2 -= self.reward_queue2.get()
+                self.reward_queue2.put(r)
+                self.sumreward2 += r
+                try:
+                    self.average_reward2 = self.sumreward2 / self.t2 #using when t > 0
+                except:
+                    pass
+                if (self.t2 < 10000):
+                    self.t2 += 1
+                epsilon = min(self.epsilon - self.k * (self.average_reward2 - 0.5), self.epsilon)
                 epsilon = max(epsilon, 0.01)
                 if np.random.uniform() < epsilon:
                     action = np.random.randint(0, 4)

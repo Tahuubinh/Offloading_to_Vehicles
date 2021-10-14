@@ -108,7 +108,7 @@ def Run_RGreedy(i, file):
     files.write("kq,sl,mean_reward\n")
     env = BusEnv("RGreedy")
     env.modifyEnv(i, file)
-    for i in range(100):
+    for i in range(201):
         tong=0
         h=0
         soluong=0
@@ -134,10 +134,9 @@ def Run_RGreedy(i, file):
             soluong+=1
             files1.write(str(sumreward / nreward)+"\n")
             if c==True :
-                if i!=99:
+                if i!=201:
                     env.reset()
                 files.write(str(tong)+","+str(soluong)+","+str(tong/soluong)+"\n")
-                print(tong)
     stop = timeit.default_timer()
     #print('Time: ', stop - start)  
     files.close()
@@ -198,7 +197,7 @@ def Run_BDQL(i, file):
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = BDQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, gamma=0.8,
+              target_model_update=1e-3, policy=policy, gamma=0.99,
               memory_interval=1, i_name = i, file = file, reward_capacity = reward_capacity,
               k = k, epsilon = epsilon)
     files = open("testDQL.csv","w")
@@ -208,7 +207,7 @@ def Run_BDQL(i, file):
     callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_BDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
+    dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
             baseline = baseline)
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
@@ -256,16 +255,16 @@ def Run_Sarsa(i, file):
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
     try:
-        dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+        dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     except Exception as e:
         print(e)
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
     baseline = None  # None if using FDQO, >0 and <1 if using baseline
-    threshold = 0.85     # if reward received bigger than threshold, using Fuzzy Logic
-    k = 0.4     # Same formula as BDQL
-    epsilon = 0.1
+    threshold = 0.9     # if reward received bigger than threshold, using Fuzzy Logic
+    k = 0.3     # Same formula as BDQL
+    epsilon = 0.0
     model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file,
                                     k = k, threshold = threshold)
     #Create enviroment FDQO
@@ -282,13 +281,13 @@ def Run_FDQO(i, file):
     callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_FDQO_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     model.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    model.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
+    model.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
               baseline = baseline, eps = 1)
     #model.fit(env, nb_steps= 130000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     files.close()
 
 if __name__=="__main__":
-    file = "csvFilesNorm" # Location to save all the results
+    file = "csvFilesNorm200steps" # Location to save all the results
     # types = "DQL"
     # if len(sys.argv) > 1:
     #     types = sys.argv[1]
@@ -306,10 +305,10 @@ if __name__=="__main__":
     for i in range(0,1):
         try:
             #Run_DQL("M900_1000_mem25_4", file)
-            #Run_BDQL("M900_1000_test", file)
+            #Run_BDQL("M900_1000_200steps_gamma_0.99", file)
             #Run_DDQL("M900_1000_mem25_3", file)
-            #Run_FDQO("M900_1000_0.85", file)
-            #Run_RGreedy("M900_1000", file)
-            Run_Sarsa("M900_1000", file)
+            #Run_FDQO("M900_1000_0.9_g0.6", file)
+            Run_RGreedy("M900_1000_200_tslots", file)
+            #Run_Sarsa("M900_1000", file)
         except:
             continue
