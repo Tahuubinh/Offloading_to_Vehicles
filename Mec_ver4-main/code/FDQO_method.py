@@ -262,6 +262,8 @@ class DQNAgent(AbstractDQNAgent):
         # Select an action.
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
+        # if self.step % 1000 == 0:
+        #     print(q_values)
         if baseline:
             # average of max #reward_capacity nearest rewards
             if self.reward_queue.full():
@@ -288,7 +290,13 @@ class DQNAgent(AbstractDQNAgent):
                     self.t2 += 1
                 epsilon = min(self.epsilon - self.k * (self.average_reward2 - 0.5), self.epsilon)
                 epsilon = max(epsilon, 0.01)
-                if np.random.uniform() < epsilon:
+                # if self.step > 50000:
+                #     if np.random.uniform() < epsilon:
+                #         action = np.random.choice(np.argpartition(q_values, -3)[-3:])
+                #     else:
+                #         action = np.argmax(q_values)
+                # else:
+                if self.step % 2 and np.random.uniform() < 2 * epsilon:
                     action = np.random.randint(0, 4)
                 else:
                     action = np.argmax(q_values)
