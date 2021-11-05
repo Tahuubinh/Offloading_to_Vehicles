@@ -167,7 +167,7 @@ def Run_DQL(i, file):
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, gamma=0.8, memory_interval=1,
+              target_model_update=1e-3, policy=policy, gamma=0.9, memory_interval=1,
               i_name = i, file = file)
     files = open("testDQL.csv","w")
     files.write("kq\n")
@@ -176,20 +176,20 @@ def Run_DQL(i, file):
     callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_DQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 5000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_BDQL(i, file):
     model=build_model(14,4)
     num_actions = 4
-    # using static by setting policy2 to None
+    # using static by setting policy2
     # for dynamic, epsilon = min(epsilon, epsilon - k(average_reward - baseline))
     # epsilon = max(epsilon, 0.01)
-    baseline = 0.5      
-    k = 0.3
+    baseline = 0.6   
+    k = 0.5
     epsilon = 0.1
     policy = EpsGreedyQPolicy(epsilon)
-    policy2 = None      # None if not used, mean: using dynamic insted
+    policy2 = None #EpsGreedyQPolicy(0.05)      # None if not used, mean: using dynamic insted
     reward_capacity = 10000      # Queue that save the last "reward_capacity" rewards
     env = BusEnv("BDQL")
     env.modifyEnv(i, file)
@@ -197,7 +197,7 @@ def Run_BDQL(i, file):
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = BDQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy, gamma=0.9,
+              target_model_update=1e-3, policy=policy, policy2 = policy2, gamma=0.9,
               memory_interval=1, i_name = i, file = file, reward_capacity = reward_capacity,
               k = k, epsilon = epsilon)
     files = open("testDQL.csv","w")
@@ -207,7 +207,7 @@ def Run_BDQL(i, file):
     callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_BDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 200000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
+    dqn.fit(env, nb_steps= 5000, visualize=False, verbose=2,callbacks=[callbacks,callback2],
             baseline = baseline)
     # dqn.test(env, nb_steps= 50000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
@@ -221,7 +221,7 @@ def Run_DDQL(i, file):
     memory = SequentialMemory(limit=25000, window_length=1)
     
     dqn = DQNAgent(model=model, nb_actions=num_actions, memory=memory, nb_steps_warmup=10,\
-              target_model_update=1e-3, policy=policy,gamma=0.8,memory_interval=1,
+              target_model_update=1e-3, policy=policy,gamma=0.9,memory_interval=1,
               enable_double_dqn=True, i_name = i, file = file)
     files = open("testDDQL.csv","w")
     files.write("kq\n")
@@ -230,7 +230,7 @@ def Run_DDQL(i, file):
     callback2 = ModelIntervalCheckpoint("./"+ str(file) +"/weight_DDQL_"+ str(i) +".h5f",interval=50000)
     callback3 = TestLogger11(files)
     dqn.compile(Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(env, nb_steps= 100000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
+    dqn.fit(env, nb_steps= 5000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     # dqn.test(env, nb_steps= 30000, visualize=False, verbose=2,callbacks=[callbacks,callback2])
     
 def Run_Sarsa(i, file):
@@ -261,9 +261,9 @@ def Run_Sarsa(i, file):
 
 def Run_FDQO(i, file):
     FDQO_method = Model_Deep_Q_Learning(14,4)    #In model  size, action
-    baseline = 0.5  # None if using FDQO, >0 and <1 if using baseline
+    baseline = None  # None if using FDQO, >0 and <1 if using baseline
     threshold = 0.9     # if reward received bigger than threshold, using Fuzzy Logic
-    k = 0.3     # Same formula as BDQL
+    k = 0.6     # Same formula as BDQL
     epsilon = 0.1
     model = FDQO_method.build_model(epsilon = epsilon, name = i, file = file,
                                     k = k, threshold = threshold)
@@ -272,7 +272,7 @@ def Run_FDQO(i, file):
     env.modifyEnv(i, file)
     env.seed(123)
     #create memory
-    memory = SequentialMemory(limit=50000, window_length=1)
+    memory = SequentialMemory(limit=25000, window_length=1)
     #open files
     files = open("testFDQO.csv","w")
     files.write("kq\n")
@@ -302,13 +302,52 @@ if __name__=="__main__":
     # elif types == "DDQL":
     #     Run_DDQL()
     #create model FDQO
-    for i in range(0,1):
+    for i in range(1,2):
         try:
-            #Run_DQL("M900_1000_mem25_4", file)
-            #Run_BDQL("M900_1000_200steps_gamma_0.99", file)
-            #Run_DDQL("M900_1000_mem25_3", file)
-            #Run_FDQO("M900_1000_baseline_0.9_g0.5_4", file)
+            #Run_DQL("M900_1000_" + str(i), file)
+            #Run_BDQL("M900_1000_200steps_gamma_0.9_static", file)
+            #Run_DDQL("M900_1000_200steps_2", file)
+            Run_FDQO("M900_1000_0.9_g0.5", file)
+            #Run_FDQO("M900_1000_0.9_baseline0.4_queue1k5", file)
             #Run_RGreedy("M900_1000_200_tslots", file)
-            Run_Sarsa("M900_1000", file)
+            #Run_Sarsa("M900_1000", file)
         except:
             continue
+   
+    # for i in range(1,6):
+    #     try:
+    #         Run_DDQL("M900_1000_" + str(i), file)
+    #     except:
+    #         continue   
+    # for i in range(1,6):
+    #     try:
+    #         Run_FDQO("M900_1000_0.9_baseline"+i, file)
+    #     except:
+    #         continue  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

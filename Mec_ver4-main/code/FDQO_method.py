@@ -118,7 +118,7 @@ class DQNAgent(AbstractDQNAgent):
         self.average_reward = 0
         self.t = 0
         self.sumreward = 0
-        self.reward_capacity = 3000
+        self.reward_capacity = 1500
         self.reward_queue = Queue(maxsize = self.reward_capacity)
         self.epsilon = epsilon
         self.k = k
@@ -288,15 +288,19 @@ class DQNAgent(AbstractDQNAgent):
                     pass
                 if (self.t2 < 10000):
                     self.t2 += 1
-                epsilon = min(self.epsilon - self.k * (self.average_reward2 - 0.5), self.epsilon)
+                epsilon = min(self.epsilon - self.k * (self.average_reward2 - 0.6), self.epsilon)
                 epsilon = max(epsilon, 0.01)
                 # if self.step > 50000:
-                #     if np.random.uniform() < epsilon:
-                #         action = np.random.choice(np.argpartition(q_values, -3)[-3:])
+                #     if self.step % 2 and np.random.uniform() < 2 * epsilon:
+                #         action = np.random.randint(0, 4)
                 #     else:
                 #         action = np.argmax(q_values)
                 # else:
-                if self.step % 2 and np.random.uniform() < 2 * epsilon:
+                #     if np.random.uniform() < epsilon:
+                #         action = np.random.randint(0, 4)
+                #     else:
+                #         action = np.argmax(q_values)
+                if np.random.uniform() < epsilon:
                     action = np.random.randint(0, 4)
                 else:
                     action = np.argmax(q_values)

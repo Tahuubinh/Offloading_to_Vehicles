@@ -820,29 +820,32 @@ class BDQNAgent(DQNAgent):
         self.k = k
     def forward(self, observation, step = 0, baseline = 0.2, eps = 0.0, r = 0):
         # Select an action.
+        
         state = self.memory.get_recent_state(observation)
         q_values = self.compute_q_values(state)
-        if self.reward_capacity == 0:
-            self.sumreward += r
-            try:
-                self.average_reward = self.sumreward / self.t
-            except:
-                pass
-            self.t += 1
-        else:
-            #print(self.sumreward, self.reward_queue.qsize(), self.t)
-            if self.reward_queue.full():
-                self.sumreward -= self.reward_queue.get()
-            self.reward_queue.put(r)
-            self.sumreward += r
-            try:
-                self.average_reward = self.sumreward / self.t
-            except:
-                pass
-            if (self.t < self.reward_capacity):
-                self.t += 1
         if self.training:
             if (self.policy2 == None):
+                
+                if self.reward_capacity == 0:
+                    self.sumreward += r
+                    try:
+                        self.average_reward = self.sumreward / self.t
+                    except:
+                        pass
+                    self.t += 1
+                else:
+                    #print(self.sumreward, self.reward_queue.qsize(), self.t)
+                    if self.reward_queue.full():
+                        self.sumreward -= self.reward_queue.get()
+                    self.reward_queue.put(r)
+                    self.sumreward += r
+                    try:
+                        self.average_reward = self.sumreward / self.t
+                    except:
+                        pass
+                    if (self.t < self.reward_capacity):
+                        self.t += 1
+                
                 epsilon = min(self.epsilon - self.k * (self.average_reward - baseline), self.epsilon)
                 epsilon = max(epsilon, 0.01)
                 if np.random.uniform() < epsilon:

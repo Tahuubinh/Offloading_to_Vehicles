@@ -175,6 +175,7 @@ class Agent(object):
                 # (forward step) and then use the reward to improve (backward step).
                 # delays = env.dict_of_vehicular_delay()
                 avg_reward = env.get_average_reward()
+                #print(baseline)
                 action = self.forward(observation, self.step, baseline, eps, r)
                 if self.processor is not None:
                     action = self.processor.process_action(action)
